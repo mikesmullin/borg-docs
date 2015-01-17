@@ -72,7 +72,7 @@ block content
           a(href="http://aws.amazon.com/") Amazon Web Services
           |  integration is implemented at present.
 
-        h3 2.1 Amazon Web Services
+        h3 2.1. Amazon Web Services
         p This integration depends on the AWS CLI utility being installed:
         pre: code
           | cd /tmp
@@ -91,11 +91,85 @@ block content
           a(href="http://docs.aws.amazon.com/AWSEC2/latest/CommandLineReference/set-up-ec2-cli-linux.html") Setting Up the Amazon EC2 Command Line Interface Tools
 
 
+        h2 3. Introduction
+
+        h3 3.1. Vernacular
+        ul
+          li
+            strong script: 
+            | file containing code listing steps to complete orchestration.
+            br
+            br
+          li 
+            strong resource: 
+            | named function organizing common steps for reuse across multiple scripts; often with the secondary goal of becoming os agnostic.
+            br
+            br
+          li 
+            strong server: 
+            | file containing code defining how remote machines are named and addressed, and which scripts must be applied in order to complete their orchestration.
+            br
+            br
+          li 
+            strong attribute: 
+            | server variable; representing static data, dynamic runtime calculation functions, or personal preferences/overrides for use by scripts at runtime.
+            br
+            br
+          li 
+            strong networks.coffee: 
+            | file containing a list of servers and their attributes--as well as the relationship of one server to another in a hierarchy of datacenters, groups, server types, and server instances.
+            br
+            br
+          li 
+            strong datacenter: 
+            | the outermost unit available for the grouping of reusable server definitions (e.g., one datacenter may contain two or more instances of the same server)
+            br
+            br
+          li 
+            strong group: 
+            | another unit available for the grouping of servers; typically named after the environment and project (e.g., a datacenter may contain a group for the production environment of project A as well as the staging environment for project B, both of which contain separate instances of the same type of server)
+            br
+            br
+          li 
+            strong borg create: 
+            | to provision a new empty remote server via cloud provider apis.
+            br
+            br
+          li 
+            strong borg assimilate: 
+            | to orchestrate a remote server.
+            br
+            br
+          li 
+            strong borg assemble: 
+            | to both create and then assimilate.
+            br
+            br
+
+        h3 3.2. Directory structure
+        pre: code
+          | attributes/		JSON and CSON files; see 
+          a(href="#") Attributes
+          |  chapter below
+          |   networks.coffee	your datacenter and server hierarchy
+          |   memory.json		remembers details from cloud provider api interactions
+          | scripts/		your Scripts; see 
+          a(href="#") Scripts
+          |  chapter below
+          |   server/		code defining which Servers use which Scripts
+          |   vendor/		third-party Scripts as Git submodules
+
+
+
+
+
+
+
 
         h2 3. Contributing
         p Your contributions are welcome via Github.com.
 
-        h3 3.1 Issuing a Pull Request
+        h3 3.1. Issuing a Pull Request
         ol
           li
             p
@@ -115,24 +189,23 @@ block content
             li
               a(href='#') Getting Started
               ul
-                li
-                  a(href='#') Install Node.JS
-                li
-                  a(href='#') Install Borg
-                li
-                  a(href='#') Generate a New Project
-                li
-                  a(href='#') Explore Help
+                li: a(href='#') Install Node.JS
+                li: a(href='#') Install Borg
+                li: a(href='#') Generate a New Project
+                li: a(href='#') Explore Help
             li
               a(href='#') Cloud Integration
               ul
-                li
-                  a(href='#') Amazon Web Services
+                li: a(href='#') Amazon Web Services
+            li
+              a(href='#') Introduction
+              ul
+                li: a(href='#') Vernacular
+                li: a(href='#') Directory structure
             li
               a(href='#') Contributing
               ul
-                li
-                  a(href='#') Issuing a Pull Request
+                li: a(href='#') Issuing a Pull Request
 
     footer
       .wrapper

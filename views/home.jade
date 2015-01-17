@@ -50,22 +50,52 @@ block content
           | 1.2. Install 
           a(href="https://github.com/mikesmullin/borg") Borg
         pre: code
-          | # install Borg
           | npm install borg -g
 
-        h3 1.3. Generate New Project
+        h3 1.3. Generate a New Project
         pre: code
           | borg init Devops
           | cd Devops/
+        p
+          | Or, clone an 
+          a(href="https://github.com/mikesmullin/borg-sample-project") existing
+          |  one.
 
         h3 1.4. Explore Help
         pre: code
           | borg help
 
-        h2 2. Contributing Back
-        p Everyone is encouraged to help improve Borg. You will find our maintainers to be extremely friendly and responsive.
+        h2 2. Cloud Integration
+        p
+          | Though abstracted to integrate with any cloud provider,
+          | only 
+          a(href="http://aws.amazon.com/") Amazon Web Services
+          |  integration is implemented at present.
 
-        h3 2.1 Issuing a Pull Request
+        h3 2.1 Amazon Web Services
+        p This integration depends on the AWS CLI utility being installed:
+        pre: code
+          | cd /tmp
+          | wget https://s3.amazonaws.com/aws-cli/awscli-bundle.zip
+          | unzip awscli-bundle.zip
+          | sudo ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
+          | aws --version # test
+        p and configured:
+        pre: code
+          | aws configure
+          | Access Key ID: your-aws-access-key-id
+          | Secret Access Key: your-aws-secret-key
+        p
+          | For more information, please see:
+          br
+          a(href="http://docs.aws.amazon.com/AWSEC2/latest/CommandLineReference/set-up-ec2-cli-linux.html") Setting Up the Amazon EC2 Command Line Interface Tools
+
+
+
+        h2 3. Contributing
+        p Your contributions are welcome via Github.com.
+
+        h3 3.1 Issuing a Pull Request
         ol
           li
             p
@@ -90,11 +120,16 @@ block content
                 li
                   a(href='#') Install Borg
                 li
-                  a(href='#') Generate New Project
+                  a(href='#') Generate a New Project
                 li
                   a(href='#') Explore Help
             li
-              a(href='#') Contributing Back
+              a(href='#') Cloud Integration
+              ul
+                li
+                  a(href='#') Amazon Web Services
+            li
+              a(href='#') Contributing
               ul
                 li
                   a(href='#') Issuing a Pull Request
@@ -102,9 +137,9 @@ block content
     footer
       .wrapper
         p
-          | This work is licensed as 
+          | This documentation is licensed 
           a(href='http://creativecommons.org/licenses/by-sa/3.0/') Creative Commons Attribution-Share Alike 3.0
         p
           | "Borg" is a service mark of 
           a(href="http://smullindesign.com") Smullin Design
-          | . All Rights Reserved.
+          | .

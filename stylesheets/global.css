@@ -94,11 +94,227 @@ body {
   height: 100%;
   width: 100%;
 }
+strong {
+  font-weight: bold;
+}
+.clear {
+  clear: both;
+}
 body {
-  background: #fff;
+  font: normal 400 1em/1.3em "Rambla", sans-serif;
+}
+em {
+  font-style: italic;
+}
+body {
+  background: #d7e8d5;
+  color: #000;
+  line-height: 1.3em;
+}
+a {
+  color: quaternary;
+  text-decoration: none;
+}
+a:hover {
+  border-bottom: 2px dotted;
+  padding-bottom: 1px;
+}
+ul,
+ol {
+  margin: 1em 0 1em 1em;
+}
+ul li,
+ol li {
+  margin: 0 0 0 1em;
+}
+ol {
+  list-style-type: decimal;
+}
+ul {
+  list-style-type: square;
+}
+.wrapper {
+  width: 966px;
+  margin: 0 auto;
+  padding: 20px 0;
+}
+nav {
+  background: #413d3d;
+  border-bottom: 15px solid #696262;
+  padding: 0 0 0.7em 0;
+}
+nav h1 {
+  font-size: 3em;
+  float: left;
+  margin: 0.25em 0 0 0;
+  color: #c8ff00;
+  width: 439px;
+  height: 56px;
+  background: url("../images/borg-docs-logo.png") no-repeat;
+  text-indent: -9999px;
+}
+nav ul.right {
+  position: relative;
+  width: 500px;
+  text-align: right;
+  font-size: 1.2em;
+  float: right;
+  margin: 1.5em 0 0 0;
+}
+nav ul.right li {
+  display: inline;
+  margin-right: 0.5em;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+  font-weight: bold;
+}
+nav ul.right li a {
+  color: #ddd;
+}
+nav ul.right li.toc {
+  background: rgba(0,0,0,0.33);
+  padding: 0.75em 1em;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+}
+nav ul.right li.toc a {
+  color: #c8ff00;
+  border-color: #c8ff00;
+}
+header {
+  background: #c8ff00;
+  color: #000;
+  border-top: 15px solid #c8ff00;
+  border-bottom: 5px solid #a0cc00;
+  padding: 0 0 1em 0;
+}
+header .wrapper {
+  padding: 1em 366px 0 0;
+  width: 600px;
+}
+header h2 {
+  font: 600 1.9em/1.2em "Source Sans Pro", sans-serif;
+  margin: 0 0 0.6em 0;
+}
+header p {
+  line-height: 1.5em;
+  margin: 0 0 1em 0;
+}
+header a {
+  color: #000;
+  border-color: #000;
+}
+article {
   color: #000;
 }
-body p,
-body form .field {
+article .wrapper {
+  width: 600px;
+  padding: 0 366px 0 0;
+  margin: 1em auto;
+}
+article h2 {
+  font: 600 1.7em/1.3em "Source Sans Pro", sans-serif;
+  margin: 1em 0 0.5em 0;
+}
+article h3 {
+  font: 600 1.2em/1.3em "Source Sans Pro", sans-serif;
+  margin: 1em 0 0.5em 0;
+}
+article p {
   margin: 1em 0;
+}
+article a {
+  color: #fa023c;
+  border-color: #fa023c;
+}
+article .notice,
+article .alert {
+  background: #fff;
+  padding: 1em;
+  margin: 1em 0 1em 0;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+}
+article .alert {
+  background: quaternary;
+  color: #000;
+}
+article pre {
+  font: normal 0.9em/0 Monaco, monospace;
+  padding: 0;
+  margin: 0;
+}
+article pre code {
+  line-height: 1.5em;
+  background: rgba(0,0,0,0.8);
+  color: #eee;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  display: block;
+  padding: 1em;
+  margin: 1em 0;
+  overflow-x: auto;
+}
+article pre code::selection,
+article pre code::-moz-selection {
+  background: #000;
+  color: quaternary;
+}
+aside {
+  position: absolute;
+  width: 100%;
+  top: 8em;
+}
+aside .wrapper {
+  position: relative;
+  padding: 1em 0;
+}
+aside .wrapper .content {
+  position: absolute;
+  right: 0;
+  width: 257px;
+  background: #d7e8d5;
+  -webkit-border-radius: 15px 0px 5px 5px;
+  border-radius: 15px 0px 5px 5px;
+  border: solid #a0cc00;
+  border-width: 5px 5px 0 5px;
+  padding: 1em;
+}
+aside .wrapper .content h3 {
+  font: 700 1.3em "Rambla", sans-serif;
+  color: #000;
+  margin: 0 0 0.5em 0;
+}
+aside .wrapper .content ol {
+  font: 700 1em "Rambla", sans-serif;
+}
+aside .wrapper .content ul {
+  font: 400 1em "Rambla", sans-serif;
+}
+aside .wrapper .content ul,
+aside .wrapper .content ol {
+  margin: 0.5em 0 1em 0;
+}
+aside .wrapper .content ul a,
+aside .wrapper .content ol a {
+  text-decoration: underline;
+  color: #000;
+  border: none;
+}
+aside .wrapper .content ul li,
+aside .wrapper .content ol li {
+  margin: 0 0 0.5em 1em;
+}
+footer {
+  background: #413d3d;
+  border-top: 10px solid #696262;
+  color: #ddd;
+  margin: 2em 0 0 0;
+  padding: 1em 0;
+}
+footer p {
+  margin: 0 0 1em 0;
+}
+footer a {
+  color: #c8ff00;
+  border-color: #c8ff00;
 }

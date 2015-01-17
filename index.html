@@ -5,11 +5,86 @@
     <link rel="stylesheet" href="stylesheets/global.css">
   </head>
   <body>
-    <div id="header">
-      <h1>Borg Documentation</h1>
+    <div id="content">
+      <nav>
+        <div class="wrapper">
+          <h1 class="logo">Borg Documentation</h1>
+          <ul class="right">
+            <li><a href="https://github.com/mikesmullin/borg">Github</a></li>
+            <li class="toc"><a href="index.html#">Docs</a></li>
+            <li><a href="index.html#">Contribute</a></li>
+            <li><a href="index.html#">Credits</a></li>
+          </ul>
+          <div class="clear"></div>
+        </div>
+      </nav>
+      <header>
+        <div class="wrapper">
+          <h2>Borg Documentation (v0.0.1)</h2>
+          <p>This information is designed to make you immediately productive with <strong><a href="https://www.npmjs.com/package/borg">Borg v0.0.4</a></strong>.<br>When additional versions are released, previous versions will be linked here.<br>Let&rsquo;s get started!</p>
+        </div>
+      </header>
+      <article>
+        <div class="wrapper">
+          <h2>1. Getting Started</h2>
+          <h3>1.1. Install <a href="http://nodejs.org">Node.JS</a> (using <a href="https://github.com/creationix/nvm">NVM </a>is recommended)</h3>
+          <pre><code>curl https://raw.github.com/creationix/nvm/master/install.sh | sh
+nvm install v0.10.28 # latest stable preferred
+nvm use v0.10.28
+nvm alias default v0.10.28</code></pre>
+          <h3>1.2. Install <a href="https://github.com/mikesmullin/borg">Borg</a></h3>
+          <pre><code># install Borg
+npm install borg -g</code></pre>
+          <h3>1.3. Generate New Project</h3>
+          <pre><code>borg init Devops
+cd Devops/</code></pre>
+          <h3>1.4. Explore Help</h3>
+          <pre><code>borg help</code></pre>
+          <h2>2. Contributing Back</h2>
+          <p>Everyone is encouraged to help improve Borg. You will find our maintainers to be extremely friendly and responsive.</p>
+          <h3>2.1 Issuing a Pull Request</h3>
+          <ol>
+            <li>
+              <p>fork and clone <a href="https://github.com/mikesmullin/borg">https://github.com/mikesmullin/borg</a></p>
+            </li>
+            <li>edit to heart&rsquo;s content</li>
+            <li>
+              <p>publish to your fork:</p>
+              <pre><code>git commit && git push</code></pre>
+            </li>
+            <li>issue pull request to official fork, and we will review and approve or provide feedback.</li>
+          </ol>
+        </div>
+      </article>
+      <aside>
+        <div class="wrapper">
+          <div class="content">
+            <h3>Chapters</h3>
+            <ol>
+              <li><a href="index.html#">Getting Started</a>
+                <ul>
+                  <li><a href="index.html#">Install Node.JS</a></li>
+                  <li><a href="index.html#">Install Borg</a></li>
+                  <li><a href="index.html#">Generate New Project</a></li>
+                  <li><a href="index.html#">Explore Help</a></li>
+                </ul>
+              </li>
+              <li><a href="index.html#">Contributing Back</a>
+                <ul>
+                  <li><a href="index.html#">Issuing a Pull Request</a></li>
+                </ul>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </aside>
+      <footer>
+        <div class="wrapper">
+          <p>This work is licensed as <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0</a></p>
+          <p>"Borg" is a service mark of <a href="http://smullindesign.com">Smullin Design</a>. All Rights Reserved.</p>
+        </div>
+      </footer>
     </div>
-    <div id="content" class="home">
-      <p>Welcome.</p>
-    </div>
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Rambla:400,700|Source+Sans+Pro:400,600">
   </body>
 </html>

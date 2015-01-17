@@ -1,14 +1,210 @@
+// Credits
+// color palette from: http://www.colourlovers.com/palette/109188/antidesign
+// fonts from: http://www.google.com/webfont
+
+// Reset
 @import 'nib'
 global-reset()
+
+// Globals
+primary_fg = #ddd
+primary_fg_alt = #C8FF00
+primary_bg = #413D3D
+primary_bg_alt = lighten(primary_bg, 20%)
+primary_bg_alt_h = 15px
+secondary_fg = #000
+secondary_fg_alt = #000
+secondary_bg = #C8FF00
+secondary_bg_alt1 = darken(secondary_bg, 0%)
+secondary_bg_alt1_h = 15px
+secondary_bg_alt2 = darken(secondary_bg, 20%)
+secondary_bg_alt2_h = 5px
+tertiary_fg = #000
+tertiary_fg_alt = #FA023C
+tertiary_bg = #D7E8D5
+tertiary_bg_alt = lighten(primary_bg, 20%)
+tertiary_bg_alt_h = 10px
 
 html, body
   height 100%
   width 100%
 
+strong
+  font-weight bold
+
+.clear
+  clear both
+
 body
-  background white
-  color black
+  font normal 400 1em/1.3em "Rambla", sans-serif
+//.logo
+//  font-family "Lobster", cursive
+em
+  font-style italic
 
-  p, form .field
+body
+  background tertiary_bg
+  color tertiary_fg
+  line-height 1.3em
+a
+  color quaternary
+  text-decoration none
+  &:hover
+    border-bottom 2px dotted
+    padding-bottom 1px
+ul, ol
+  margin 1em 0 1em 1em
+  li
+    margin 0 0 0 1em
+ol
+  list-style-type decimal
+ul
+  list-style-type square
+
+.wrapper
+  width 966px
+  margin 0 auto
+  padding 20px 0
+
+nav
+  background primary_bg
+  border-bottom: primary_bg_alt_h solid primary_bg_alt
+  padding 0 0 .7em 0
+  h1
+    //text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8)
+    font-size 3em
+    float left
+    margin .25em 0 0 0 
+    color primary_fg_alt
+    width 439px
+    height 56px
+    background url(/images/borg-docs-logo.png) no-repeat
+    text-indent -9999px
+
+  ul.right
+    position relative
+    width 500px
+    text-align right
+    font-size 1.2em
+    float right
+    margin 1.5em 0 0 0
+    li
+      display inline
+      margin-right .5em
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5)
+      font-weight bold
+      a
+        color primary_fg
+      &.toc
+        background rgba(0,0,0,.33)
+        padding .75em 1em
+        border-radius 10px
+        a
+          color primary_fg_alt
+          border-color primary_fg_alt
+
+header
+  background secondary_bg
+  color secondary_fg
+  border-top: secondary_bg_alt1_h solid secondary_bg_alt1
+  border-bottom: secondary_bg_alt2_h solid secondary_bg_alt2
+  padding 0 0 1em 0
+  .wrapper
+    padding 1em (966px - 600px) 0 0
+    width 600px
+  h2
+    font 600 1.9em/1.2em "Source Sans Pro", sans-serif
+    margin 0 0 .6em 0
+  p
+    line-height 1.5em
+    margin 0 0 1em 0
+  a
+    color secondary_fg_alt
+    border-color secondary_fg_alt
+
+article
+  color tertiary_fg
+  .wrapper
+    width 600px
+    padding 0 (966px - 600px) 0 0
+    margin 1em auto
+  h2
+    font 600 1.7em/1.3em "Source Sans Pro", sans-serif
+    margin 1em 0 .5em 0
+  h3
+    font 600 1.2em/1.3em "Source Sans Pro", sans-serif
+    margin 1em 0 .5em 0
+  p
     margin 1em 0
+  a
+    color tertiary_fg_alt
+    border-color tertiary_fg_alt
+  .notice, .alert
+    background white
+    padding 1em
+    margin 1em 0 1em 0
+    border-radius 5px
+  .alert
+    background quaternary
+    color black
+  pre
+    font normal .9em/0 Monaco, monospace
+    padding 0
+    margin 0
+    code
+      line-height 1.5em
+      background rgba(0,0,0,.8)
+      color #eee
+      border-radius 5px
+      display block
+      padding 1em
+      margin 1em 0
+      overflow-x auto
+      &::selection, &::-moz-selection
+        background #000
+        color quaternary
 
+aside
+  position absolute
+  width 100%
+  top 8em
+  .wrapper
+    position relative
+    padding 1em 0
+    .content
+      position absolute
+      right 0
+      width 257px
+      background tertiary_bg
+      border-radius 15px 0px 5px 5px
+      border solid secondary_bg_alt2
+      border-width 5px 5px 0 5px
+      padding 1em
+      h3
+        font 700 1.3em "Rambla", sans-serif
+        color black
+        margin 0 0 .5em 0
+      ol
+        font 700 1em "Rambla", sans-serif
+      ul
+        font 400 1em "Rambla", sans-serif
+      ul, ol
+        margin .5em 0 1em 0
+        a
+          text-decoration underline
+          color tertiary_fg
+          border none
+        li
+          margin 0 0 .5em 1em
+
+footer
+  background primary_bg
+  border-top: tertiary_bg_alt_h solid tertiary_bg_alt
+  color primary_fg
+  margin 2em 0 0 0
+  padding 1em 0
+  p
+    margin 0 0 1em 0
+  a
+    color primary_fg_alt
+    border-color primary_fg_alt

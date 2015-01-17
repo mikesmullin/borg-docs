@@ -4,6 +4,7 @@ jade    = require 'jade'
 stylus  = require 'stylus'
 nib     = require 'nib'
 path    = require 'path'
+pkg     = require path.join __dirname, 'package.json'
 
 app = express()
 app.use require('morgan')('combined')
@@ -37,7 +38,10 @@ app.use express.static app.PUBLIC # static file server
 # Controllers
 
 app.get '/', (req, res) ->
-  res.render 'home'
+  res.render 'home',
+    version: pkg.version
+    borg_version:  (require 'borg/package.json').version
+    node_version: process.version
 
 # Server
 http = app.listen app.PORT, '0.0.0.0', ->

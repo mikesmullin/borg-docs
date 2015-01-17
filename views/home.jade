@@ -1,5 +1,110 @@
 extends layouts/global
 
+block head2
+  link(rel='stylesheet', href='http://fonts.googleapis.com/css?family=Rambla:400,700|Source+Sans+Pro:400,600')
+
 block content
-  #content.home
-    p Welcome.
+  #content
+    nav
+      .wrapper
+        h1.logo Borg Documentation
+        ul.right
+          li
+            a(href='https://github.com/mikesmullin/borg') Github
+          li.toc
+            a(href='#') Docs
+          li
+            a(href='#') Contribute
+          li
+            a(href='#') Credits
+        .clear
+
+    header
+      .wrapper
+        h2 Borg Documentation (v#{version})
+        p
+          | This information is designed to make you immediately productive with 
+          strong: a(href="https://www.npmjs.com/package/borg") Borg v#{borg_version}
+          | .
+          br
+          | When additional versions are released, previous versions will be linked here.
+          br
+          | Let&rsquo;s get started!
+
+    article
+      .wrapper
+        h2 1. Getting Started
+        h3
+          | 1.1. Install 
+          a(href="http://nodejs.org") Node.JS
+          |  (using 
+          a(href="https://github.com/creationix/nvm") NVM 
+          | is recommended)
+        pre: code
+          | curl https://raw.github.com/creationix/nvm/master/install.sh | sh
+          | nvm install #{node_version} # latest stable preferred
+          | nvm use #{node_version}
+          | nvm alias default #{node_version}
+
+        h3
+          | 1.2. Install 
+          a(href="https://github.com/mikesmullin/borg") Borg
+        pre: code
+          | # install Borg
+          | npm install borg -g
+
+        h3 1.3. Generate New Project
+        pre: code
+          | borg init Devops
+          | cd Devops/
+
+        h3 1.4. Explore Help
+        pre: code
+          | borg help
+
+        h2 2. Contributing Back
+        p Everyone is encouraged to help improve Borg. You will find our maintainers to be extremely friendly and responsive.
+
+        h3 2.1 Issuing a Pull Request
+        ol
+          li
+            p
+              | fork and clone 
+              a(href='https://github.com/mikesmullin/borg') https://github.com/mikesmullin/borg
+          li edit to heart&rsquo;s content
+          li
+            p publish to your fork:
+            pre: code git commit && git push
+          li issue pull request to official fork, and we will review and approve or provide feedback.
+
+    aside
+      .wrapper
+        .content
+          h3 Chapters
+          ol
+            li
+              a(href='#') Getting Started
+              ul
+                li
+                  a(href='#') Install Node.JS
+                li
+                  a(href='#') Install Borg
+                li
+                  a(href='#') Generate New Project
+                li
+                  a(href='#') Explore Help
+            li
+              a(href='#') Contributing Back
+              ul
+                li
+                  a(href='#') Issuing a Pull Request
+
+    footer
+      .wrapper
+        p
+          | This work is licensed as 
+          a(href='http://creativecommons.org/licenses/by-sa/3.0/') Creative Commons Attribution-Share Alike 3.0
+        p
+          | "Borg" is a service mark of 
+          a(href="http://smullindesign.com") Smullin Design
+          | . All Rights Reserved.

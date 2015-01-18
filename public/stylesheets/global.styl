@@ -184,10 +184,8 @@ article
       background rgba(0,0,0,.1)
       vertical-align top
 
-      
-
 aside
-  position absolute
+  position fixed
   width 100%
   top 8em
   .wrapper
@@ -218,6 +216,10 @@ aside
           border none
         li
           margin 0 0 .5em 1em
+          ul
+            display none
+          &:hover ul
+            display block
 
 footer
   background primary_bg

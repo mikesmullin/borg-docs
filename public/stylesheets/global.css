@@ -289,7 +289,7 @@ article table tbody td {
   vertical-align: top;
 }
 aside {
-  position: absolute;
+  position: fixed;
   width: 100%;
   top: 8em;
 }
@@ -332,6 +332,14 @@ aside .wrapper .content ol a {
 aside .wrapper .content ul li,
 aside .wrapper .content ol li {
   margin: 0 0 0.5em 1em;
+}
+aside .wrapper .content ul li ul,
+aside .wrapper .content ol li ul {
+  display: none;
+}
+aside .wrapper .content ul li:hover ul,
+aside .wrapper .content ol li:hover ul {
+  display: block;
 }
 footer {
   background: #413d3d;

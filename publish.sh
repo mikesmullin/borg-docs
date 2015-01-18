@@ -1,2 +1,2 @@
 #/usr/bin/env bash
-wget -nH -mk -w 1 localhost:3000
+wget -e robots=off -nH -mk localhost:3000

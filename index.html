@@ -267,6 +267,106 @@ scripts/		your Scripts; see <a href="index.html#">Scripts</a> chapter below
               </tr>
             </tbody>
           </table>
+          <h3>4.2. Cascading Attributes</h3>
+          <p>This next section applies specifically only to the <code>./attributes/networks.coffee</code> file. The goal with this file is to create an object hierarchy like: <code>datacenters: D1: groups: G1: servers: S1: instances: I1: PROPERTY: VALUE</code> where ALL-CAPS keys are names you would invent.
+            This hierarchy of <strong>cascading attributes</strong> (like <a href="https://developer.mozilla.org/en-US/docs/Web/CSS">cascading style sheets</a>)
+            allow the most generic definitions at the root (least <a href="http://www.smashingmagazine.com/2007/07/27/css-specificity-things-you-should-know/">specificity</a>)
+            to be inherited all the way down to the most specific definitions in
+            the deepest leaves (most specificity; in this case, <code>I1</code>) to define the network.
+          </p>
+          <p>
+            Observe how the keys are then inherited by instances 
+            through a <a href="https://lodash.com/docs#merge"><code>_.merge()</code></a> to create the final fully-detailed 
+            instance-level leaves a.k.a. the final object representing all 
+            the keys attributed to a specific server instance. In order of 
+            lowest to highest precedence:
+          </p>
+          <ol>
+            <li><code>global.*</code></li>
+            <li><code>datacenters.*.*</code> (except key: <code>groups</code>)</li>
+            <li><code>datacenters.*.groups.*.*</code> (except key: <code>servers</code>)</li>
+            <li><code>datacenters.*.groups.*.servers.*.*</code> (except key: <code>instances</code>)</li>
+            <li><code>datacenters.*.groups.*.servers.*.instances.*.*</code></li>
+          </ol>
+          <h3>4.3. @networks object</h3>
+          <p><strong>A <code>networks.coffee</code> structure like:</strong></p>
+          <pre><code>global:
+  ssh_port: 3562
+datacenters:
+  aws-ca:
+    provider: 'aws'
+    groups:
+      'prod-myproject':
+         env: 'prod'
+         tld: '.myproject.tld'
+         servers:
+           'myapp':
+             aws_size: 't2.micro'
+             instances:
+               '01':
+                 aws_size: 'm3.xlarge'
+                 secondary_ip: '1.2.3.4'
+               '02':
+                 secondary_ip: '1.2.3.5'</code></pre>
+          <p><strong>Will be merged into a <code>@networks</code> object, in scope from within scripts:</strong></p>
+          <pre><code>@networks.datacenters['aws-ca'].groups['prod-myproject'].servers['my-app'].instances['01'] =
+  aws_size: 'm3.xlarge'
+  secondary_ip: '1.2.3.4'
+  env: 'prod'
+  tld: '.myproject.tld'
+  provider: 'aws'
+  ssh_port: 3562
+@networks.datacenters['aws-ca'].groups['prod-myproject'].servers['my-app'].instances['02'] =
+  aws_size: 't2.micro'
+  secondary_ip: '1.2.3.5'
+  env: 'prod'
+  tld: '.myproject.tld'
+  provider: 'aws'
+  ssh_port: 3562</code></pre>
+          <p>
+            So our script can now reach attributes for all servers, and it can
+            lookup attributes by their relationship to other servers in the
+            network hierarchy. (e.g., what is the secondary_ip of each my-app
+            server in the same datacenter and group as the current server?)
+          </p>
+          <h3>4.4. @server object</h3>
+          <p>
+            But there is also a shortcut to the current server’s attributes--
+            which in the above case, if we pretend the current server is my-app02, 
+            would be:
+          </p>
+          <pre><code>@server =
+  aws_size: 't2.micro'
+  secondary_ip: '1.2.3.5'
+  env: 'prod'
+  tld: '.myproject.tld'
+  provider: 'aws'
+  ssh_port: 3562</code></pre>
+          <h2>4.5. Attribute Functions</h2>
+          <p>
+            Notice you can define function values which are [re-]evaluated
+            (as a <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get">javascript getter</a>)
+            at runtime every time they are referenced,
+            and have access to the <code>@server</code> object within the function.
+          </p>
+          <p>
+            For example, we can use this to 
+            dynamically reference other attributes, like so:
+          </p>
+          <pre><code>global:
+  aws_security_groups: -> [ @server.env +’-’+ @server.type ]</code></pre>
+          <p>
+            We love that we can take this type of data-as-code approach, 
+            and its one of the most compelling
+            reasons why we prefer a javascript-based devops solution.
+          </p>
+          <h2>4.6. Calculated Attributes</h2>
+          <p>
+            Finally, some attributes are calculated and appended for you by 
+            Borg at runtime, even though you didn’t specify them anywhere. 
+            These can be based on parts of the server name 
+            (e.g., <code>@server.type</code>, <code>@server.id</code>, <code>@server.subproject</code>, <code>@server.env</code>, <code>@server.tld</code>, <code>@server.fqdn</code>) or position in the hierarchy (e.g., <code>@server.datacenter</code>, <code>@server.group</code>).
+          </p>
           <h2>3. Contributing</h2>
           <p>Your contributions are welcome via Github.com.</p>
           <h3>3.1. Issuing a Pull Request</h3>
@@ -310,6 +410,11 @@ scripts/		your Scripts; see <a href="index.html#">Scripts</a> chapter below
               <li><a href="index.html#">Attributes</a>
                 <ul>
                   <li><a href="index.html#">Attribute Precedence</a></li>
+                  <li><a href="index.html#">Cascading Attributes</a></li>
+                  <li><a href="index.html#">@networks object</a></li>
+                  <li><a href="index.html#">@server object</a></li>
+                  <li><a href="index.html#">Attribute Functions</a></li>
+                  <li><a href="index.html#">Calculated Attributes</a></li>
                 </ul>
               </li>
               <li><a href="index.html#">Contributing</a>

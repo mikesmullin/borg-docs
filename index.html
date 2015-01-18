@@ -368,9 +368,87 @@ datacenters:
             These can be based on parts of the server name 
             (e.g., <code>@server.type</code>, <code>@server.id</code>, <code>@server.subproject</code>, <code>@server.env</code>, <code>@server.tld</code>, <code>@server.fqdn</code>) or position in the hierarchy (e.g., <code>@server.datacenter</code>, <code>@server.group</code>).
           </p>
-          <h2 id="contributing">5. Contributing</h2>
+          <h2 id="scripts">5. Scripts</h2>
+          <h3 id="importing">5.1. Importing</h3>
+          <pre><code>@import @cwd, ‘’</code></pre>
+          <h3 id="debugging">5.2. Debugging</h3>
+          <pre><code>@log()</code></pre>
+          <pre><code>borg debug</code></pre>
+          <h3 id="asynchronous-flow-control">5.3. Asynchronous Flow Control</h3>
+          <pre><code>@then
+@call
+@inject_flow (end) =>
+@die()</code></pre>
+          <h3 id="cryptography">5.4. Cryptography</h3>
+          <pre><code>@encrypt() / @decrypt()</code></pre>
+          <h3 id="iteration">5.5. Iteration</h3>
+          <pre><code>@each()
+@eachServer()</code></pre>
+          <h2 id="resources">6. Resources</h2>
+          <h3 id="common">6.1. Common</h3>
+          <p>There is a third-party submodule that comes with every new <code>borg init</code> and that is the borg-scripts/resources repository. It holds the 
+            most basic functions you would expect to use in any project.
+          </p>
+          <p>
+            Notice that these are kept very light-weight. The list is 
+            short but they do a lot by themselves. The preference though is 
+            very biased toward bash scripting muscle. In the author’s 
+            opinion, it makes more sense for three reasons:
+          </p>
+          <ol>
+            <li>
+              Someone not familiar with borg but who is familiar with bash 
+              could more readily read / QA a borg script and copy/paste from 
+              it to achieve the same outcome.
+            </li>
+            <li>
+              Typically the process for making a new script involves first 
+              making the server manually, which results in a bash history 
+              which is used as a template for the devops script. It saves 
+              time to be able to simply paste the bash history into Borg, 
+              rather than have to translate it to yet another domain 
+              specific language (DSL), and back out to bash when 
+              debugging/troubleshooting.
+            </li>
+            <li>
+              Well written bash script tends to be terse and powerful, 
+              resulting in far less boilerplate and complexity than the 
+              equivalent heavy resource.
+            </li>
+            <p>
+              Also notice that at the moment they’re all targeting Ubuntu
+              server exclusively. Although its half-expected that resources 
+              will all be converted to an OS-agnostic version in the future, 
+              the author hasn’t had any immediate need for it, yet. Expect 
+              it to be added sooner if someone will volunteer the pull request.
+            </p>
+          </ol>
+          <pre><code>@execute()
+@package_update()
+@install()
+@uninstall()
+@directory()
+@chown()
+@chmod()
+@template()
+@upload()
+@download()
+@link()
+@remote_file_exists()
+@append_line_to_file()
+@replace_line_in_file()
+@user()
+@group()
+@deploy()
+@reboot()</code></pre>
+          <h3 id="third-party-submodules">6.2. Third-Party Submodules</h3>
+          <pre><code>borg install
+borg update</code></pre>
+          <p>The documentation for resources can be found in their individual repos.</p>
+          <p>For a listing of available repos, see:<br><a href="https://github.com/borg-scripts">https://github.com/borg-scripts</a></p>
+          <h2 id="contributing">7. Contributing</h2>
           <p>Your contributions are welcome via Github.com.</p>
-          <h3 id="issuing-a-pull-request">5.1. Issuing a Pull Request</h3>
+          <h3 id="issuing-a-pull-request">7.1. Issuing a Pull Request</h3>
           <ol>
             <li>
               <p>fork and clone <a href="https://github.com/mikesmullin/borg">https://github.com/mikesmullin/borg</a></p>
@@ -416,6 +494,21 @@ datacenters:
                   <li><a href="index.html#@server-object">@server object</a></li>
                   <li><a href="index.html#attribute-functions">Attribute Functions</a></li>
                   <li><a href="index.html#calculated-attributes">Calculated Attributes</a></li>
+                </ul>
+              </li>
+              <li><a href="index.html#scripts">Scripts</a>
+                <ul>
+                  <li><a href="index.html#importing">Importing</a></li>
+                  <li><a href="index.html#debugging">Debugging</a></li>
+                  <li><a href="index.html#asynchronous-flow-control">Asynchronous Flow Control</a></li>
+                  <li><a href="index.html#cryptography">Cryptography</a></li>
+                  <li><a href="index.html#iteration">Iteration</a></li>
+                </ul>
+              </li>
+              <li><a href="index.html#resources">Resources</a>
+                <ul>
+                  <li><a href="index.html#common">Common</a></li>
+                  <li><a href="index.html#third-party-submodules">Third-Party Submodules</a></li>
                 </ul>
               </li>
               <li><a href="index.html#contributing">Contributing</a>

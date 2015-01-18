@@ -107,8 +107,8 @@ em {
   font-style: italic;
 }
 body {
-  background: #d7e8d5;
-  color: #000;
+  background: #343838;
+  color: #fff;
   line-height: 1.3em;
 }
 a {
@@ -139,15 +139,15 @@ ul {
   padding: 20px 0;
 }
 nav {
-  background: #413d3d;
-  border-bottom: 15px solid #696262;
+  background: #005f6b;
+  border-bottom: 15px solid #00a7bc;
   padding: 0 0 0.7em 0;
 }
 nav h1 {
   font-size: 3em;
   float: left;
   margin: 0.25em 0 0 0;
-  color: #c8ff00;
+  color: #00dffc;
   width: 439px;
   height: 56px;
   background: url("../images/borg-docs-logo.png") no-repeat;
@@ -168,7 +168,7 @@ nav ul.right li {
   font-weight: bold;
 }
 nav ul.right li a {
-  color: #ddd;
+  color: #fff;
 }
 nav ul.right li.toc {
   background: rgba(0,0,0,0.33);
@@ -177,14 +177,14 @@ nav ul.right li.toc {
   border-radius: 10px;
 }
 nav ul.right li.toc a {
-  color: #c8ff00;
-  border-color: #c8ff00;
+  color: #00dffc;
+  border-color: #00dffc;
 }
 header {
-  background: #c8ff00;
+  background: #00b4cc;
   color: #000;
-  border-top: 15px solid #c8ff00;
-  border-bottom: 5px solid #a0cc00;
+  border-top: 15px solid #00b4cc;
+  border-bottom: 5px solid #555;
   padding: 0 0 1em 0;
 }
 header .wrapper {
@@ -204,7 +204,7 @@ header a {
   border-color: #000;
 }
 article {
-  color: #000;
+  color: #fff;
 }
 article .wrapper {
   width: 600px;
@@ -223,8 +223,8 @@ article p {
   margin: 1em 0;
 }
 article a {
-  color: #fa023c;
-  border-color: #fa023c;
+  color: #c8ff00;
+  border-color: #c8ff00;
 }
 article .notice,
 article .alert {
@@ -242,7 +242,7 @@ article p code,
 article li code {
   font: normal 0.9em/0 Monaco, monospace;
   background: rgba(0,0,0,0.2);
-  color: #000;
+  color: #fff;
   -webkit-border-radius: 5px;
   border-radius: 5px;
   padding: 1px 5px;
@@ -273,7 +273,7 @@ article table {
 }
 article table th,
 article table td {
-  border: 2px solid #d7e8d5;
+  border: 2px solid #343838;
   padding: 10px;
 }
 article table th p,
@@ -301,16 +301,16 @@ aside .wrapper .content {
   position: absolute;
   right: 0;
   width: 257px;
-  background: #d7e8d5;
+  background: #343838;
   -webkit-border-radius: 15px 0px 5px 5px;
   border-radius: 15px 0px 5px 5px;
-  border: solid #a0cc00;
+  border: solid #555;
   border-width: 5px 5px 0 5px;
   padding: 1em;
 }
 aside .wrapper .content h3 {
   font: 700 1.3em "Rambla", sans-serif;
-  color: #000;
+  color: #fff;
   margin: 0 0 0.5em 0;
 }
 aside .wrapper .content ol {
@@ -326,7 +326,7 @@ aside .wrapper .content ol {
 aside .wrapper .content ul a,
 aside .wrapper .content ol a {
   text-decoration: underline;
-  color: #000;
+  color: #fff;
   border: none;
 }
 aside .wrapper .content ul li,
@@ -334,9 +334,9 @@ aside .wrapper .content ol li {
   margin: 0 0 0.5em 1em;
 }
 footer {
-  background: #413d3d;
-  border-top: 10px solid #696262;
-  color: #ddd;
+  background: #005f6b;
+  border-top: 10px solid #00a7bc;
+  color: #fff;
   margin: 2em 0 0 0;
   padding: 1em 0;
 }
@@ -344,6 +344,6 @@ footer p {
   margin: 0 0 1em 0;
 }
 footer a {
-  color: #c8ff00;
-  border-color: #c8ff00;
+  color: #00dffc;
+  border-color: #00dffc;
 }

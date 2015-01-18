@@ -238,6 +238,15 @@ article .alert {
   background: quaternary;
   color: #000;
 }
+article p code,
+article li code {
+  font: normal 0.9em/0 Monaco, monospace;
+  background: rgba(0,0,0,0.2);
+  color: #000;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  padding: 1px 5px;
+}
 article pre {
   font: normal 0.9em/0 Monaco, monospace;
   padding: 0;
@@ -257,7 +266,27 @@ article pre code {
 article pre code::selection,
 article pre code::-moz-selection {
   background: #000;
-  color: quaternary;
+  color: #fff;
+}
+article table {
+  border-collapse: collapse;
+}
+article table th,
+article table td {
+  border: 2px solid #d7e8d5;
+  padding: 10px;
+}
+article table th p,
+article table td p {
+  margin-top: 0;
+}
+article table thead th {
+  background: rgba(0,0,0,0.15);
+  font-weight: bold;
+}
+article table tbody td {
+  background: rgba(0,0,0,0.1);
+  vertical-align: top;
 }
 aside {
   position: absolute;

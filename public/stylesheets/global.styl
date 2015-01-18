@@ -147,6 +147,13 @@ article
   .alert
     background quaternary
     color black
+  p, li
+    code
+      font normal .9em/0 Monaco, monospace
+      background rgba(0,0,0,.2)
+      color black
+      border-radius 5px
+      padding 1px 5px
   pre
     font normal .9em/0 Monaco, monospace
     padding 0
@@ -161,8 +168,23 @@ article
       margin 1em 0
       overflow-x auto
       &::selection, &::-moz-selection
-        background #000
-        color quaternary
+        background black
+        color white
+  table
+    border-collapse collapse
+    th, td
+      border 2px solid tertiary_bg
+      padding 10px
+      p
+        margin-top 0
+    thead th
+      background rgba(0,0,0,.15)
+      font-weight bold
+    tbody td
+      background rgba(0,0,0,.1)
+      vertical-align top
+
+      
 
 aside
   position absolute

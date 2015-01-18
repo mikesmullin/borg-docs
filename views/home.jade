@@ -191,7 +191,7 @@ block content
           a(href="http://coffeescript.org/#conditionals") ternary
           |  and 
           a(href="http://coffeescript.org/#switch") switch statements
-          | . This features make it a more versatile alternative to 
+          | . These features make it a more versatile alternative to 
           a(href="http://www.yaml.org/") YAML
           | .
         p
@@ -226,7 +226,7 @@ block content
           | the handy chart below, in order of precedence:
         table
           thead: tr
-            th Name, Location, Precendence
+            th Name, Location, Precedence
             th Description
           tbody
             tr
@@ -621,9 +621,14 @@ block content
 
 
         +chapter('Scripts')
+        p
+          strong WARNING: 
+          | From this chapter onward are mostly placeholders; its a
+          | Work in Progress (WIP).
+
         +section('Importing')
         pre: code
-          | @import @cwd, ‘’
+          | @import @cwd, 'scripts', 'your-script'
 
         +section('Debugging')
         pre: code
@@ -640,7 +645,10 @@ block content
 
         +section('Cryptography')
         pre: code
-          | @encrypt() / @decrypt()
+          | @encrypt()
+          | @decrypt()
+        pre: code
+          | borg encrypt
 
         +section('Iteration')
         pre: code
@@ -674,7 +682,7 @@ block content
             | specific language (DSL), and back out to bash when 
             | debugging/troubleshooting.
           li
-            | Well written bash script tends to be terse and powerful, 
+            | Well-written bash script tends to be terse and powerful, 
             | resulting in far less boilerplate and complexity than the 
             | equivalent heavy resource.
           p
@@ -722,13 +730,14 @@ block content
         ol
           li
             p
-              | fork and clone 
+              | Fork and clone
+              br
               a(href='https://github.com/mikesmullin/borg') https://github.com/mikesmullin/borg
-          li edit to heart&rsquo;s content
+          li Edit to heart&rsquo;s content
           li
-            p publish to your fork:
+            p Publish to your fork:
             pre: code git commit && git push
-          li issue pull request to official fork, and we will review and approve or provide feedback.
+          li Issue pull request to official repo, and we will review and approve or provide feedback.
 
     aside
       .wrapper

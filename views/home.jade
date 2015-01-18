@@ -10,18 +10,18 @@ mixin section(name)
 
 block content
   #content
-    nav
+    nav#top
       .wrapper
         h1.logo Borg Documentation
         ul.right
           li
             a(href='https://github.com/mikesmullin/borg') Github
           li.toc
-            a(href='#') Docs
+            a(href='#top') Docs
           li
-            a(href='#') Contribute
+            a(href='#contributing') Contribute
           li
-            a(href='#') Credits
+            a(href='https://github.com/mikesmullin/borg/graphs/contributors') Credits
         .clear
 
     header
@@ -744,10 +744,14 @@ block content
 
     footer
       .wrapper
-        p
-          | This documentation is licensed 
-          a(href='http://creativecommons.org/licenses/by-sa/3.0/') Creative Commons Attribution-Share Alike 3.0
-        p
-          | "Borg" is a service mark of 
-          a(href="http://smullindesign.com") Smullin Design
-          | .
+        .left
+          p
+            | This documentation is licensed 
+            a(href='http://creativecommons.org/licenses/by-sa/3.0/') Creative Commons Attribution-Share Alike 3.0
+          p
+            | "Borg" is a service mark of 
+            a(href="http://smullindesign.com") Smullin Design
+            | .
+        .right
+          a(href="#top") Back to top &uarr;
+        .clear

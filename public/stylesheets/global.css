@@ -340,6 +340,12 @@ footer {
   margin: 2em 0 0 0;
   padding: 1em 0;
 }
+footer .left {
+  float: left;
+}
+footer .right {
+  float: right;
+}
 footer p {
   margin: 0 0 1em 0;
 }

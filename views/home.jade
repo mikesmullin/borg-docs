@@ -211,14 +211,16 @@ block content
         p
           | There are times when it is appropriate for an attribute to be 
           | defined in more than one place. Borg knows which value to use 
-          | in these cases because it merges attribute files in a specific 
-          | order at runtime. For example, your attribute definitions will 
+          | in these cases because it merges attribute files in a 
+          a(href="#attribute-precedence") specific order
+          |  at runtime. For example, your attribute definitions will 
           | override any defaults provided by third-party submodules. 
         p
           | The resulting attribute values are accessible to all scripts 
           | from within the 
-          code @server
-          |  variable, which is also pretty printed 
+          code
+            a(href="#@server-object") @server
+          |  object, which is also pretty printed 
           | to the debug log at the beginning of each run.
 
         +section('Attribute Precedence')
@@ -623,20 +625,91 @@ block content
           | ).
 
 
+        +chapter('Resources')
+        p
+          | All resources are just 
+          em
+            a(href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function") functions
+          | .
+          | Within every script and callback--anyplace that would typically
+          | be considered a space the average devops scripter would occupy,
+          | there is a carefully crafted object provided as the reference
+          | of 
+          code
+            a(href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/this") this
+          |  in Javascript or 
+          code
+            a(href="http://coffeescript.org/#operators") @
+          |  in CoffeeScript. It is where the 
+          code
+            a(href="#@server-object") @server
+          |  object lives, and it is also where all resources can be found.
+        p
+          | Borg's resources are divided into three categories:
+        ul
+          li
+            strong
+              a(href="#scripts") Core Resources
+              | :
+            |  Resources referenced by Borg core itself;
+            | these are shipped with and are inseparable from Borg.
+            | They can generally be considered part of the 
+            strong
+              | Domain Specific Language (
+              a(href="http://en.wikipedia.org/wiki/Domain-specific_language")
+                | DSL
+              | )
+            |  which all scripts use. There are deliberately as few as
+            | possible defined.
+            br
+            br
+          li
+            strong
+              a(href="#common-resources") Common Resources
+              | :
+            |  Resources most people expect to be there, but aren't needed by Borg core;
+            | these are packaged externally like a third-party resource, and installed as a Git submodule by 
+            code borg init
+            |  with all new projects. That is so anyone who might decide one of its
+            | resources isn't good enough for them can replace, modify, or override it.
+            br
+            br
+          li
+            strong
+              a(href="#third-party-resources") Third-Party Resources
+              | :
+            |  Resources which clearly wouldn't be used by every project;
+            | these are packaged externally and installed as 
+            a(href="http://git-scm.com/book/en/v2/Git-Tools-Submodules")
+              Git submodules
+            |  by 
+            code borg install
+            |  as-needed. That is so anyone can author a set of resources and share 
+            | with others as easily as uploading to 
+            a(href="http://github.com") Github.com
+            | .
+            br
+            br
+        p
+          | Each of these are discussed further in their own separate chapters below.
 
 
         +chapter('Scripts')
         p
-          strong WARNING: 
-          | From this chapter onward are mostly placeholders; its a
-          | Work in Progress (WIP).
+          | Writing scripts that define 
+          em how you want your servers built
+          |  is the whole purpose of Borg, and every other feature is only a facilitator
+          | toward that goal. The focus surrounds complete control and convenience--
+          | for a 
+          em programmer
+          | ; someone who dreams in code and works in shells every day.
 
-        +section('Importing')
-        pre: code
+        +section('Importing Code')
+        pre: code.coffee
           | @import @cwd, 'scripts', 'your-script'
 
-        +section('Debugging')
-        pre: code
+        +section('Interactive Debugging')
+        pre: code.coffee
           | @log()
         pre: code.nohighlight
           | borg debug
@@ -661,8 +734,7 @@ block content
           | @eachServer()
 
 
-        +chapter('Resources')
-        +section('Common')
+        +chapter('Common Resources')
         p
           | There is a third-party submodule that comes with every new 
           code borg init
@@ -696,27 +768,26 @@ block content
             | will all be converted to an OS-agnostic version in the future, 
             | the author hasn’t had any immediate need for it, yet. Expect 
             | it to be added sooner if someone will volunteer the pull request.
-        pre: code
-          | @execute()
-          | @package_update()
-          | @install()
-          | @uninstall()
-          | @directory()
-          | @chown()
-          | @chmod()
-          | @template()
-          | @upload()
-          | @download()
-          | @link()
-          | @remote_file_exists()
-          | @append_line_to_file()
-          | @replace_line_in_file()
-          | @user()
-          | @group()
-          | @deploy()
-          | @reboot()
+        +section('@execute()')
+        +section('@package_update()')
+        +section('@install()')
+        +section('@uninstall()')
+        +section('@directory()')
+        +section('@chown()')
+        +section('@chmod()')
+        +section('@template()')
+        +section('@upload()')
+        +section('@download()')
+        +section('@link()')
+        +section('@remote_file_exists()')
+        +section('@append_line_to_file()')
+        +section('@replace_line_in_file()')
+        +section('@user()')
+        +section('@group()')
+        +section('@deploy()')
+        +section('@reboot()')
 
-        +section('Third-Party Submodules')
+        +chapter('Third-Party Resources')
         pre: code
           | borg install
           | borg update

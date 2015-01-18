@@ -80,7 +80,7 @@ scripts/		your Scripts; see <a href="index.html#scripts">Scripts</a> chapter bel
   server/		code defining which Servers use which Scripts
   vendor/		third-party Scripts as Git submodules</code></pre>
           <h2 id="attributes">4. Attributes</h2>
-          <p>Attribute files are regular <a href="http://coffeescript.org">CoffeeScript</a> files, appropriately suffixed <code>.coffee</code>, but some of them might more effectively thought of as <strong>CoffeeScript Object Notation (<a href="https://github.com/bevry/cson">CSON</a>)</strong>; a variation of <a href="http://www.json.org/">JSON</a> that allows you to, among other things, make use of <a href="http://coffeescript.org/#strings">comments</a>, <a href="http://coffeescript.org/#strings">string interpolation</a>, <a href="http://coffeescript.org/#literals">function values</a>, and conditional logic such as <a href="http://coffeescript.org/#conditionals">ternary</a> and <a href="http://coffeescript.org/#switch">switch statements</a>. This features make it a more versatile alternative to <a href="http://www.yaml.org/">YAML</a>.</p>
+          <p>Attribute files are regular <a href="http://coffeescript.org">CoffeeScript</a> files, appropriately suffixed <code>.coffee</code>, but some of them might more effectively thought of as <strong>CoffeeScript Object Notation (<a href="https://github.com/bevry/cson">CSON</a>)</strong>; a variation of <a href="http://www.json.org/">JSON</a> that allows you to, among other things, make use of <a href="http://coffeescript.org/#strings">comments</a>, <a href="http://coffeescript.org/#strings">string interpolation</a>, <a href="http://coffeescript.org/#literals">function values</a>, and conditional logic such as <a href="http://coffeescript.org/#conditionals">ternary</a> and <a href="http://coffeescript.org/#switch">switch statements</a>. These features make it a more versatile alternative to <a href="http://www.yaml.org/">YAML</a>.</p>
           <p>
             It is recommended to take advantage of these features to achieve,
             as close as possible, the overall goal of <strong><a href="http://en.wikipedia.org/wiki/Don%27t_repeat_yourself">DRY</a> (Don’t Repeat Yourself)</strong> and readability. Strive to simplify the job of an
@@ -111,7 +111,7 @@ scripts/		your Scripts; see <a href="index.html#scripts">Scripts</a> chapter bel
           <table>
             <thead>
               <tr>
-                <th>Name, Location, Precendence</th>
+                <th>Name, Location, Precedence</th>
                 <th>Description</th>
               </tr>
             </thead>
@@ -369,8 +369,11 @@ datacenters:
             (e.g., <code>@server.type</code>, <code>@server.id</code>, <code>@server.subproject</code>, <code>@server.env</code>, <code>@server.tld</code>, <code>@server.fqdn</code>) or position in the hierarchy (e.g., <code>@server.datacenter</code>, <code>@server.group</code>).
           </p>
           <h2 id="scripts">5. Scripts</h2>
+          <p><strong>WARNING: </strong>From this chapter onward are mostly placeholders; its a
+            Work in Progress (WIP).
+          </p>
           <h3 id="importing">5.1. Importing</h3>
-          <pre><code>@import @cwd, ‘’</code></pre>
+          <pre><code>@import @cwd, 'scripts', 'your-script'</code></pre>
           <h3 id="debugging">5.2. Debugging</h3>
           <pre><code>@log()</code></pre>
           <pre><code>borg debug</code></pre>
@@ -380,7 +383,9 @@ datacenters:
 @inject_flow (end) =>
 @die()</code></pre>
           <h3 id="cryptography">5.4. Cryptography</h3>
-          <pre><code>@encrypt() / @decrypt()</code></pre>
+          <pre><code>@encrypt()
+@decrypt()</code></pre>
+          <pre><code>borg encrypt</code></pre>
           <h3 id="iteration">5.5. Iteration</h3>
           <pre><code>@each()
 @eachServer()</code></pre>
@@ -411,7 +416,7 @@ datacenters:
               debugging/troubleshooting.
             </li>
             <li>
-              Well written bash script tends to be terse and powerful, 
+              Well-written bash script tends to be terse and powerful, 
               resulting in far less boilerplate and complexity than the 
               equivalent heavy resource.
             </li>
@@ -451,14 +456,14 @@ borg update</code></pre>
           <h3 id="issuing-a-pull-request">7.1. Issuing a Pull Request</h3>
           <ol>
             <li>
-              <p>fork and clone <a href="https://github.com/mikesmullin/borg">https://github.com/mikesmullin/borg</a></p>
+              <p>Fork and clone<br><a href="https://github.com/mikesmullin/borg">https://github.com/mikesmullin/borg</a></p>
             </li>
-            <li>edit to heart&rsquo;s content</li>
+            <li>Edit to heart&rsquo;s content</li>
             <li>
-              <p>publish to your fork:</p>
+              <p>Publish to your fork:</p>
               <pre><code>git commit && git push</code></pre>
             </li>
-            <li>issue pull request to official fork, and we will review and approve or provide feedback.</li>
+            <li>Issue pull request to official repo, and we will review and approve or provide feedback.</li>
           </ol>
         </div>
       </article>

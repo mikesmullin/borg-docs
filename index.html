@@ -26,26 +26,27 @@
       </header>
       <article>
         <div class="wrapper">
-          <h2>1. Getting Started</h2>
-          <h3>1.1. Install <a href="http://nodejs.org">Node.JS</a> (using <a href="https://github.com/creationix/nvm">NVM </a>is recommended)</h3>
+          <h2 id="getting-started">1. Getting Started</h2>
+          <h3 id="install-node.js">1.1. Install Node.JS</h3>
+          <p>Using <a href="https://github.com/creationix/nvm">NVM </a> to install <a href="http://nodejs.org">Node.JS</a> is recommended.</p>
           <pre><code>curl https://raw.github.com/creationix/nvm/master/install.sh | sh
 nvm install v0.10.28 # latest stable preferred
 nvm use v0.10.28
 nvm alias default v0.10.28</code></pre>
-          <h3>1.2. Install <a href="https://github.com/mikesmullin/borg">Borg</a></h3>
+          <h3 id="install-borg">1.2. Install Borg</h3>
           <pre><code>npm install borg -g</code></pre>
-          <h3>1.3. Generate a New Project</h3>
+          <h3 id="generate-a-new-project">1.3. Generate a New Project</h3>
           <pre><code>borg init Devops
 cd Devops/</code></pre>
           <p>Or, clone an <a href="https://github.com/mikesmullin/borg-sample-project">existing</a> one.</p>
-          <h3>1.4. Explore Help</h3>
+          <h3 id="explore-help">1.4. Explore Help</h3>
           <pre><code>borg help</code></pre>
-          <h2>2. Cloud Integration</h2>
+          <h2 id="cloud-integration">2. Cloud Integration</h2>
           <p>
             Though abstracted to integrate with any cloud provider,
             only <a href="http://aws.amazon.com/">Amazon Web Services</a> integration is implemented at present.
           </p>
-          <h3>2.1. Amazon Web Services</h3>
+          <h3 id="amazon-web-services">2.1. Amazon Web Services</h3>
           <p>This integration depends on the AWS CLI utility being installed:</p>
           <pre><code>cd /tmp
 wget https://s3.amazonaws.com/aws-cli/awscli-bundle.zip
@@ -57,8 +58,8 @@ aws --version # test</code></pre>
 Access Key ID: your-aws-access-key-id
 Secret Access Key: your-aws-secret-key</code></pre>
           <p>For more information, please see:<br><a href="http://docs.aws.amazon.com/AWSEC2/latest/CommandLineReference/set-up-ec2-cli-linux.html">Setting Up the Amazon EC2 Command Line Interface Tools</a></p>
-          <h2>3. Introduction</h2>
-          <h3>3.1. Vernacular</h3>
+          <h2 id="introduction">3. Introduction</h2>
+          <h3 id="vernacular">3.1. Vernacular</h3>
           <ul>
             <li><strong>script: </strong>file containing code listing steps to complete orchestration.<br><br></li>
             <li> <strong>resource: </strong>named function organizing common steps for reuse across multiple scripts; often with the secondary goal of becoming os agnostic.<br><br></li>
@@ -71,14 +72,14 @@ Secret Access Key: your-aws-secret-key</code></pre>
             <li> <strong>borg assimilate: </strong>to orchestrate a remote server.<br><br></li>
             <li> <strong>borg assemble: </strong>to both <code>create</code> and then <code>assimilate</code>.<br><br></li>
           </ul>
-          <h3>3.2. Directory structure</h3>
-          <pre><code>attributes/		JSON and CSON files; see <a href="index.html#">Attributes</a> chapter below
+          <h3 id="directory-structure">3.2. Directory structure</h3>
+          <pre><code>attributes/		JSON and CSON files; see <a href="index.html#attributes">Attributes</a> chapter below
   networks.coffee	your datacenter and server hierarchy
   memory.json		remembers details from cloud provider api interactions
-scripts/		your Scripts; see <a href="index.html#">Scripts</a> chapter below
+scripts/		your Scripts; see <a href="index.html#scripts">Scripts</a> chapter below
   server/		code defining which Servers use which Scripts
   vendor/		third-party Scripts as Git submodules</code></pre>
-          <h2>4. Attributes</h2>
+          <h2 id="attributes">4. Attributes</h2>
           <p>Attribute files are regular <a href="http://coffeescript.org">CoffeeScript</a> files, appropriately suffixed <code>.coffee</code>, but some of them might more effectively thought of as <strong>CoffeeScript Object Notation (<a href="https://github.com/bevry/cson">CSON</a>)</strong>; a variation of <a href="http://www.json.org/">JSON</a> that allows you to, among other things, make use of <a href="http://coffeescript.org/#strings">comments</a>, <a href="http://coffeescript.org/#strings">string interpolation</a>, <a href="http://coffeescript.org/#literals">function values</a>, and conditional logic such as <a href="http://coffeescript.org/#conditionals">ternary</a> and <a href="http://coffeescript.org/#switch">switch statements</a>. This features make it a more versatile alternative to <a href="http://www.yaml.org/">YAML</a>.</p>
           <p>
             It is recommended to take advantage of these features to achieve,
@@ -98,7 +99,7 @@ scripts/		your Scripts; see <a href="index.html#">Scripts</a> chapter below
             from within the <code>@server</code> variable, which is also pretty printed 
             to the debug log at the beginning of each run.
           </p>
-          <h3>4.1. Attribute Precedence</h3>
+          <h3 id="attribute-precedence">4.1. Attribute Precedence</h3>
           <p>
             Although it may seem straightforward, when making changes its 
             important to be sure any changes to attribute values won’t be 
@@ -267,7 +268,7 @@ scripts/		your Scripts; see <a href="index.html#">Scripts</a> chapter below
               </tr>
             </tbody>
           </table>
-          <h3>4.2. Cascading Attributes</h3>
+          <h3 id="cascading-attributes">4.2. Cascading Attributes</h3>
           <p>This next section applies specifically only to the <code>./attributes/networks.coffee</code> file. The goal with this file is to create an object hierarchy like: <code>datacenters: D1: groups: G1: servers: S1: instances: I1: PROPERTY: VALUE</code> where ALL-CAPS keys are names you would invent.
             This hierarchy of <strong>cascading attributes</strong> (like <a href="https://developer.mozilla.org/en-US/docs/Web/CSS">cascading style sheets</a>)
             allow the most generic definitions at the root (least <a href="http://www.smashingmagazine.com/2007/07/27/css-specificity-things-you-should-know/">specificity</a>)
@@ -279,7 +280,7 @@ scripts/		your Scripts; see <a href="index.html#">Scripts</a> chapter below
             through a <a href="https://lodash.com/docs#merge"><code>_.merge()</code></a> to create the final fully-detailed 
             instance-level leaves a.k.a. the final object representing all 
             the keys attributed to a specific server instance. In order of 
-            lowest to highest precedence:
+            objects merged; latter overrides former.
           </p>
           <ol>
             <li><code>global.*</code></li>
@@ -288,7 +289,7 @@ scripts/		your Scripts; see <a href="index.html#">Scripts</a> chapter below
             <li><code>datacenters.*.groups.*.servers.*.*</code> (except key: <code>instances</code>)</li>
             <li><code>datacenters.*.groups.*.servers.*.instances.*.*</code></li>
           </ol>
-          <h3>4.3. @networks object</h3>
+          <h3 id="@networks-object">4.3. @networks object</h3>
           <p><strong>A <code>networks.coffee</code> structure like:</strong></p>
           <pre><code>global:
   ssh_port: 3562
@@ -329,7 +330,7 @@ datacenters:
             network hierarchy. (e.g., what is the secondary_ip of each my-app
             server in the same datacenter and group as the current server?)
           </p>
-          <h3>4.4. @server object</h3>
+          <h3 id="@server-object">4.4. @server object</h3>
           <p>
             But there is also a shortcut to the current server’s attributes--
             which in the above case, if we pretend the current server is my-app02, 
@@ -342,7 +343,7 @@ datacenters:
   tld: '.myproject.tld'
   provider: 'aws'
   ssh_port: 3562</code></pre>
-          <h2>4.5. Attribute Functions</h2>
+          <h3 id="attribute-functions">4.5. Attribute Functions</h3>
           <p>
             Notice you can define function values which are [re-]evaluated
             (as a <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get">javascript getter</a>)
@@ -360,16 +361,16 @@ datacenters:
             and its one of the most compelling
             reasons why we prefer a javascript-based devops solution.
           </p>
-          <h2>4.6. Calculated Attributes</h2>
+          <h3 id="calculated-attributes">4.6. Calculated Attributes</h3>
           <p>
             Finally, some attributes are calculated and appended for you by 
             Borg at runtime, even though you didn’t specify them anywhere. 
             These can be based on parts of the server name 
             (e.g., <code>@server.type</code>, <code>@server.id</code>, <code>@server.subproject</code>, <code>@server.env</code>, <code>@server.tld</code>, <code>@server.fqdn</code>) or position in the hierarchy (e.g., <code>@server.datacenter</code>, <code>@server.group</code>).
           </p>
-          <h2>3. Contributing</h2>
+          <h2 id="contributing">5. Contributing</h2>
           <p>Your contributions are welcome via Github.com.</p>
-          <h3>3.1. Issuing a Pull Request</h3>
+          <h3 id="issuing-a-pull-request">5.1. Issuing a Pull Request</h3>
           <ol>
             <li>
               <p>fork and clone <a href="https://github.com/mikesmullin/borg">https://github.com/mikesmullin/borg</a></p>
@@ -388,38 +389,38 @@ datacenters:
           <div class="content">
             <h3>Chapters</h3>
             <ol>
-              <li><a href="index.html#">Getting Started</a>
+              <li><a href="index.html#getting-started">Getting Started</a>
                 <ul>
-                  <li><a href="index.html#">Install Node.JS</a></li>
-                  <li><a href="index.html#">Install Borg</a></li>
-                  <li><a href="index.html#">Generate a New Project</a></li>
-                  <li><a href="index.html#">Explore Help</a></li>
+                  <li><a href="index.html#install-node.js">Install Node.JS</a></li>
+                  <li><a href="index.html#install-borg">Install Borg</a></li>
+                  <li><a href="index.html#generate-a-new-project">Generate a New Project</a></li>
+                  <li><a href="index.html#explore-help">Explore Help</a></li>
                 </ul>
               </li>
-              <li><a href="index.html#">Cloud Integration</a>
+              <li><a href="index.html#cloud-integration">Cloud Integration</a>
                 <ul>
-                  <li><a href="index.html#">Amazon Web Services</a></li>
+                  <li><a href="index.html#amazon-web-services">Amazon Web Services</a></li>
                 </ul>
               </li>
-              <li><a href="index.html#">Introduction</a>
+              <li><a href="index.html#introduction">Introduction</a>
                 <ul>
-                  <li><a href="index.html#">Vernacular</a></li>
-                  <li><a href="index.html#">Directory structure</a></li>
+                  <li><a href="index.html#vernacular">Vernacular</a></li>
+                  <li><a href="index.html#directory-structure">Directory structure</a></li>
                 </ul>
               </li>
-              <li><a href="index.html#">Attributes</a>
+              <li><a href="index.html#attributes">Attributes</a>
                 <ul>
-                  <li><a href="index.html#">Attribute Precedence</a></li>
-                  <li><a href="index.html#">Cascading Attributes</a></li>
-                  <li><a href="index.html#">@networks object</a></li>
-                  <li><a href="index.html#">@server object</a></li>
-                  <li><a href="index.html#">Attribute Functions</a></li>
-                  <li><a href="index.html#">Calculated Attributes</a></li>
+                  <li><a href="index.html#attribute-precedence">Attribute Precedence</a></li>
+                  <li><a href="index.html#cascading-attributes">Cascading Attributes</a></li>
+                  <li><a href="index.html#@networks-object">@networks object</a></li>
+                  <li><a href="index.html#@server-object">@server object</a></li>
+                  <li><a href="index.html#attribute-functions">Attribute Functions</a></li>
+                  <li><a href="index.html#calculated-attributes">Calculated Attributes</a></li>
                 </ul>
               </li>
-              <li><a href="index.html#">Contributing</a>
+              <li><a href="index.html#contributing">Contributing</a>
                 <ul>
-                  <li><a href="index.html#">Issuing a Pull Request</a></li>
+                  <li><a href="index.html#issuing-a-pull-request">Issuing a Pull Request</a></li>
                 </ul>
               </li>
             </ol>

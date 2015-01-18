@@ -38,10 +38,28 @@ app.use express.static app.PUBLIC # static file server
 # Controllers
 
 app.get '/', (req, res) ->
+  chapters=[]
+  current_chapter=0
+  sections=[]
+  current_section=0
+  chapter = (name) ->
+    current_chapter = chapters.push
+      name: name
+      sections: []
+    return current_chapter+'. '+name
+  section = (name) ->
+    current_section = chapters[current_chapter-1].sections.push name
+    return current_chapter+'.'+current_section+'. '+name
   res.render 'home',
     version: pkg.version
     borg_version:  (require 'borg/package.json').version
     node_version: process.version
+    chapter: chapter
+    section: section
+    chapters: chapters
+
+
+
 
 # Server
 http = app.listen app.PORT, '0.0.0.0', ->

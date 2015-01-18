@@ -3,6 +3,11 @@ extends layouts/global
 block head2
   link(rel='stylesheet', href='http://fonts.googleapis.com/css?family=Rambla:400,700|Source+Sans+Pro:400,600')
 
+mixin chapter(name)
+  h2(id="#{name.dasherize()}")=chapter(name)
+mixin section(name)
+  h3(id="#{name.dasherize()}")=section(name)
+
 block content
   #content
     nav
@@ -33,26 +38,25 @@ block content
 
     article
       .wrapper
-        h2 1. Getting Started
-        h3
-          | 1.1. Install 
-          a(href="http://nodejs.org") Node.JS
-          |  (using 
+        +chapter('Getting Started')
+        +section('Install Node.JS')
+        p
+          | Using 
           a(href="https://github.com/creationix/nvm") NVM 
-          | is recommended)
+          |  to install 
+          a(href="http://nodejs.org") Node.JS
+          |  is recommended.
         pre: code
           | curl https://raw.github.com/creationix/nvm/master/install.sh | sh
           | nvm install #{node_version} # latest stable preferred
           | nvm use #{node_version}
           | nvm alias default #{node_version}
 
-        h3
-          | 1.2. Install 
-          a(href="https://github.com/mikesmullin/borg") Borg
+        +section('Install Borg')
         pre: code
           | npm install borg -g
 
-        h3 1.3. Generate a New Project
+        +section('Generate a New Project')
         pre: code
           | borg init Devops
           | cd Devops/
@@ -61,18 +65,18 @@ block content
           a(href="https://github.com/mikesmullin/borg-sample-project") existing
           |  one.
 
-        h3 1.4. Explore Help
+        +section('Explore Help')
         pre: code
           | borg help
 
-        h2 2. Cloud Integration
+        +chapter('Cloud Integration')
         p
           | Though abstracted to integrate with any cloud provider,
           | only 
           a(href="http://aws.amazon.com/") Amazon Web Services
           |  integration is implemented at present.
 
-        h3 2.1. Amazon Web Services
+        +section('Amazon Web Services')
         p This integration depends on the AWS CLI utility being installed:
         pre: code
           | cd /tmp
@@ -91,9 +95,8 @@ block content
           a(href="http://docs.aws.amazon.com/AWSEC2/latest/CommandLineReference/set-up-ec2-cli-linux.html") Setting Up the Amazon EC2 Command Line Interface Tools
 
 
-        h2 3. Introduction
-
-        h3 3.1. Vernacular
+        +chapter('Introduction')
+        +section('Vernacular')
         ul
           li
             strong script: 
@@ -150,22 +153,22 @@ block content
             br
             br
 
-        h3 3.2. Directory structure
+        +section('Directory structure')
         pre: code
           | attributes/		JSON and CSON files; see 
-          a(href="#") Attributes
+          a(href="#attributes") Attributes
           |  chapter below
           |   networks.coffee	your datacenter and server hierarchy
           |   memory.json		remembers details from cloud provider api interactions
           | scripts/		your Scripts; see 
-          a(href="#") Scripts
+          a(href="#scripts") Scripts
           |  chapter below
           |   server/		code defining which Servers use which Scripts
           |   vendor/		third-party Scripts as Git submodules
 
 
 
-        h2 4. Attributes
+        +chapter('Attributes')
         p
           | Attribute files are regular 
           a(href="http://coffeescript.org") CoffeeScript
@@ -213,7 +216,7 @@ block content
           |  variable, which is also pretty printed 
           | to the debug log at the beginning of each run.
 
-        h3 4.1. Attribute Precedence
+        +section('Attribute Precedence')
         p
           | Although it may seem straightforward, when making changes its 
           | important to be sure any changes to attribute values won’t be 
@@ -456,7 +459,7 @@ block content
                   code @server.public_ip
                   | )
 
-        h3 4.2. Cascading Attributes
+        +section('Cascading Attributes')
         p
           | This next section applies specifically only to the 
           code ./attributes/networks.coffee
@@ -483,7 +486,7 @@ block content
           |  to create the final fully-detailed 
           | instance-level leaves a.k.a. the final object representing all 
           | the keys attributed to a specific server instance. In order of 
-          | lowest to highest precedence:
+          | objects merged; latter overrides former.
         ol
           li: code global.*
           li
@@ -504,7 +507,7 @@ block content
           li
             code datacenters.*.groups.*.servers.*.instances.*.*
 
-        h3 4.3. @networks object
+        +section('@networks object')
         p: strong A 
           code networks.coffee
           |  structure like:
@@ -554,7 +557,7 @@ block content
           | network hierarchy. (e.g., what is the secondary_ip of each my-app
           | server in the same datacenter and group as the current server?)
 
-        h3 4.4. @server object
+        +section('@server object')
         p
           | But there is also a shortcut to the current server’s attributes--
           | which in the above case, if we pretend the current server is my-app02, 
@@ -569,7 +572,7 @@ block content
           |   ssh_port: 3562
 
 
-        h2 4.5. Attribute Functions
+        +section('Attribute Functions')
         p
           | Notice you can define function values which are [re-]evaluated
           | (as a 
@@ -591,7 +594,7 @@ block content
           | and its one of the most compelling
           | reasons why we prefer a javascript-based devops solution.
 
-        h2 4.6. Calculated Attributes
+        +section('Calculated Attributes')
         p
           | Finally, some attributes are calculated and appended for you by 
           | Borg at runtime, even though you didn’t specify them anywhere. 
@@ -619,10 +622,10 @@ block content
 
 
 
-        h2 3. Contributing
+        +chapter('Contributing')
         p Your contributions are welcome via Github.com.
 
-        h3 3.1. Issuing a Pull Request
+        +section('Issuing a Pull Request')
         ol
           li
             p
@@ -639,35 +642,12 @@ block content
         .content
           h3 Chapters
           ol
-            li
-              a(href='#') Getting Started
-              ul
-                li: a(href='#') Install Node.JS
-                li: a(href='#') Install Borg
-                li: a(href='#') Generate a New Project
-                li: a(href='#') Explore Help
-            li
-              a(href='#') Cloud Integration
-              ul
-                li: a(href='#') Amazon Web Services
-            li
-              a(href='#') Introduction
-              ul
-                li: a(href='#') Vernacular
-                li: a(href='#') Directory structure
-            li
-              a(href='#') Attributes
-              ul
-                li: a(href='#') Attribute Precedence
-                li: a(href='#') Cascading Attributes
-                li: a(href='#') @networks object
-                li: a(href='#') @server object
-                li: a(href='#') Attribute Functions
-                li: a(href='#') Calculated Attributes
-            li
-              a(href='#') Contributing
-              ul
-                li: a(href='#') Issuing a Pull Request
+            each chapter in chapters
+              li
+                a(href="##{chapter.name.dasherize()}")=chapter.name
+                ul
+                  each section in chapter.sections
+                    li: a(href="##{section.dasherize()}")=section
 
     footer
       .wrapper

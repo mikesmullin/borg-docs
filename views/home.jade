@@ -66,13 +66,29 @@ block content
           | borg init Devops
           | cd Devops/
         p
-          | Or, clone an 
-          a(href="https://github.com/mikesmullin/borg-sample-project") existing
-          |  one.
+          | Or, hit the ground running by cloning our 
+          a(href="https://github.com/mikesmullin/borg-sample-project")
+            | existing sample project
+          |  which can produce a web server hosting a mirror of this documentation.
 
         +section('Explore Help')
+        p
+          | The 
+          code borg
+          |  
+          strong
+            | Command Line Interface (
+            a(href="http://en.wikipedia.org/wiki/Command-line_interface") CLI
+            | )
+          |  contains many commands which are not documented here. That documentation
+          | is expected to be accessed directly, beginning with the following command:
         pre: code.nohighlight
           | borg help
+        p
+          strong(style="color:#999") NOTICE:
+          |  Most
+          code borg
+          |  CLI commands require your working directory to be the project root.
 
         +chapter('Cloud Integration')
         p
@@ -239,7 +255,8 @@ block content
             tr
               td
                 p
-                  strong 1. Hard-coded
+                  strong#hard-coded-attributes
+                    | 1. Hard-coded Attributes
                   br
                   | scripts/*/*.coffee
                   br
@@ -279,7 +296,7 @@ block content
             tr
               td
                 p
-                  strong
+                  strong#cli-attributes
                     | 2. CLI 
                     code --locals=
                     |  Attributes
@@ -316,7 +333,8 @@ block content
             tr
               td
                 p
-                  strong 3. Global Attributes
+                  strong#global-attributes
+                    | 3. Global Attributes
                   br
                   | attributes/networks.coffee
                   br
@@ -342,7 +360,8 @@ block content
             tr
               td
                 p
-                  strong 4. Datacenter Attributes
+                  strong#datacenter-attributes
+                    | 4. Datacenter Attributes
                   br
                   | attributes/networks.coffee
                   br
@@ -380,7 +399,8 @@ block content
             tr
               td
                 p
-                  strong 5. Server Attributes
+                  strong#server-attributes
+                    | 5. Server Attributes
                   br
                   | scripts/servers/*.coffee
                   br
@@ -409,7 +429,8 @@ block content
             tr
               td
                 p
-                  strong 6. Script Attributes
+                  strong#script-attributes
+                    | 6. Script Attributes
                   br
                   | scripts/*/attributes/*/*.coffee
               td
@@ -435,7 +456,8 @@ block content
             tr
               td
                 p
-                  strong 7. Memory Attributes
+                  strong#memory-attributes
+                    | 7. Memory Attributes
                   br
                   | attributes/memory.json
                   br
@@ -515,7 +537,8 @@ block content
             code datacenters.*.groups.*.servers.*.instances.*.*
 
         +section('@networks object')
-        p: strong A 
+        p
+          | A 
           code networks.coffee
           |  structure like:
         pre: code.cson
@@ -538,7 +561,8 @@ block content
           |                '02':
           |                  secondary_ip: '1.2.3.5'
 
-        p: strong Will be merged into a 
+        p
+          | Will be merged into a 
           code @networks
           |  object, in scope from within scripts:
         pre: code.cson
@@ -701,25 +725,249 @@ block content
           |  is the whole purpose of Borg, and every other feature is only a facilitator
           | toward that goal. The focus surrounds complete control and convenience--
           | for a 
-          em programmer
+          em: a(href="http://i.imgur.com/dBNfqlQ.jpg") programmer
           | ; someone who dreams in code and works in shells every day.
 
-        +section('Importing Code')
-        pre: code.coffee
-          | @import @cwd, 'scripts', 'your-script'
+        +section('Defining Servers')
+        p
+          | A server definition links your scripts and your 
+          a(href="#datacenter-attributes") datacenter attributes
+          |  to
+          | a single 
+          strong
+            | Fully Qualified Domain Name (
+            a(href="https://kb.iu.edu/d/aiuv") FQDN
+            | )
+          |  which you can use on the CLI,
+          | according to the custom naming convention below.
 
-        +section('Interactive Debugging')
-        pre: code.coffee
-          | @log()
+        p: strong FQDN Format:
         pre: code.nohighlight
-          | borg debug
+          | [
+          a(href="#fqdn-datacenter") datacenter
+          | ]-[
+          a(href="#fqdn-env") env
+          | ]-[
+          a(href="#fqdn-type") type
+          | ][
+          a(href="#fqdn-instance") instance
+          | ]-[
+          a(href="#fqdn-subproject") subproject
+          | ].[
+          a(href="#fqdn-tld") tld
+          | ]
+        p: strong Definitions:
+        ul
+          li
+            strong#fqdn-datacenter datacenter:
+            |  Must uniquely match a key you define inside the 
+            code datacenters:
+            |  key.
+            br
+            | (e.g., 
+            code aws-ca
+            |  might signify the Amazon Web Services datacenter in California)
+            br
+            br
+          li
+            strong#fqdn-env env:
+            |  Must match an
+            code env:
+            |  key value you define.
+            br
+            | Unique match determined by 
+            code datacenter
+            | +
+            code env
+            | . 
+            br
+            | (e.g., 
+            code dev
+            | , 
+            code stage
+            | , 
+            code prod
+            |  are recommended)
+            br
+            br
+          li
+            strong#fqdn-type type:
+            |  Must match a key you define inside a 
+            code servers:
+            |  key.
+            br
+            | Unique match determined by 
+            code datacenter
+            | +
+            code env
+            | +
+            code type
+            | . 
+            br
+            | (e.g., 
+            code web
+            |  might represent horizontally scaling servers hosting your website)
+            br
+            br
+          li
+            strong#fqdn-instance instance:
+            |  Must match a key you define inside an 
+            code instances:
+            |  key.
+            br
+            | Unique match determined by 
+            code datacenter
+            | +
+            code env
+            | +
+            code type
+            | +
+            code instance
+            | . 
+            br
+            | (e.g., 
+            code 01
+            |  might represent the first instance of many more servers like it)
+            br
+            br
+          li
+            strong#fqdn-subproject subproject
+            |  (Optional):
+            |  Must match a 
+            code subproject:
+            |  key value you define anywhere below the 
+            code datacenters:
+            |  key. 
+            br
+            | Unique match determined by 
+            code datacenter
+            | +
+            code subproject
+            | . 
+            br
+            | (e.g., 
+            code mobile
+            |  might represent the mobile counterpart to your desktop product,
+            | if the architecture were significantly different)
+            br
+            br
+          li
+            strong#fqdn-tld tld:
+            |  (Optional):
+            |  Must match a 
+            code tld:
+            |  key value you define anywhere below the 
+            code datacenters:
+            |  or 
+            code globals:
+            |  keys. 
+            | Does not have to be unique.
+            br
+            | (e.g., 
+            code .example.org
+            |  might be your corporate domain)
+        p
+          | All definitions of valid values for your project happen inside the 
+          code: a(href="#@networks-object") networks.coffee
+          |  file.
+        p
+          | The motivation is to simplify
+          | command-line interactions so:
+        ol
+          li Commands remain simple.
+          li Complicated logic connecting everything together remains in code where it belongs.
+          li
+            p(style="margin-top: 0")
+              | Borg can guess your intentions when naming previously undefined new servers,
+              | and do the right thing. For example, if all you have defined is:
+            pre: code.cson
+              | datacenters:
+              |   'aws-ca':
+              |     tld: '.example.org'
+              |     groups:
+              |       'mikes-dev':
+              |          env: 'dev'
+            p
+              |  and a 
+              code scripts/servers/web.coffee
+              |  server definition, Borg will only pause briefly to prompt for 
+              | human confirmation that you mean
+              | to permanently define new servers (via 
+              code: a(href="#memory-attributes") memory.json
+              | ) when you specify commands like:
+            pre: code.nohighlight
+              | borg create aws-ca-dev-web01.example.org
+              | borg assimilate aws-ca-dev-web02.example.org
+              | borg assemble aws-ca-dev-web99.example.org
+            p
+              | ...and carry on to do exactly what you had intended. Any further
+              | commands referencing those FQDN will be treated exactly as any
+              | other pre-defined server, since they are remembered by Borg until 
+              code borg destroy
+              |  is called, or they are otherwise deleted from 
+              code memory.json
+              | .
+
+
+
+        +section('Importing Code')
+        p
+          | The import declaration takes arguments similarly to 
+          code
+            a(href="http://nodejs.org/api/path.html#path_path_join_path1_path2")
+              | path.join()
+          | . The 
+          code @cwd
+          |  variable is a string provided by Borg holding the result of 
+          code
+            a(href="http://nodejs.org/api/process.html#process_process_cwd") process.cwd()
+          | which is expected to be the absolute path to the root of your
+          | Borg project.
+
+        pre: code.coffee
+          | @import @cwd, 'scripts', 'vendor', 'redis', 'server'
 
         +section('Asynchronous Flow Control')
         pre: code.coffee
           | @then
           | @call
           | @inject_flow (end) =>
-          | @die()
+
+        +section('Console Debugging')
+        p
+          | Of course, some people prefer to temporarily sprinkle log
+          | statements throughout their code and then run it to see
+          | what order they appear on the console log:
+        pre: code.coffee
+          | @then @log "Reaching here? Let's see what variable x is: \#{x}."
+          | console.log() # the non-async way
+        p
+          | Sometimes also aborting just after the point of interest,
+          | to prevent going too far or taking a long time between
+          | iterations:
+        pre: code.coffee
+          | @die "The reason is I am debugging. This is only temporary."
+          | process.exit 1 # the non-async way
+        p
+          | Its a valid strategy and occasionally faster than other methods.
+
+        +section('Interactive Debugging')
+        p
+          | You can start also Borg with the 
+          code debug
+          |  parameter to launch a 
+          a(href="http://www.google.com/chrome/") Chrome
+          |  browser using 
+          a(href="https://developer.chrome.com/devtools") DevTools
+          |  to catch breakpoints, pause, step over,
+          | step into, step out, continue, and inspect the stack, backtrace, 
+          | etc. From there the experience is very similar to any other 
+          | Javascript, Node.JS, or CoffeeScript application.
+        pre: code.nohighlight
+          | borg debug
+
+        +section('Automated Testing')
+
 
         +section('Cryptography')
         pre: code.coffee

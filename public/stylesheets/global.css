@@ -241,8 +241,8 @@ article .alert {
 article p code,
 article li code {
   font: normal 0.9em/0 Monaco, monospace;
-  background: rgba(0,0,0,0.2);
-  color: #fff;
+  background: #23241f;
+  color: #ccc;
   -webkit-border-radius: 5px;
   border-radius: 5px;
   padding: 1px 5px;
@@ -254,8 +254,8 @@ article pre {
 }
 article pre code {
   line-height: 1.5em;
-  background: rgba(0,0,0,0.8);
-  color: #eee;
+  background: #23241f;
+  color: #ccc;
   -webkit-border-radius: 5px;
   border-radius: 5px;
   display: block;

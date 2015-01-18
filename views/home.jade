@@ -1,7 +1,12 @@
 extends layouts/global
 
 block head2
-  link(rel='stylesheet', href='http://fonts.googleapis.com/css?family=Rambla:400,700|Source+Sans+Pro:400,600')
+  link(rel='stylesheet' href='http://fonts.googleapis.com/css?family=Rambla:400,700|Source+Sans+Pro:400,600')
+  link(rel='stylesheet' href='/stylesheets/monokai_sublime.css')
+  script(src='/behaviors/highlight.pack.js')
+  script.
+    hljs.initHighlightingOnLoad();
+
 
 mixin chapter(name)
   h2(id="#{name.dasherize()}")=chapter(name)
@@ -46,18 +51,18 @@ block content
           |  to install 
           a(href="http://nodejs.org") Node.JS
           |  is recommended.
-        pre: code
+        pre: code.nohighlight
           | curl https://raw.github.com/creationix/nvm/master/install.sh | sh
           | nvm install #{node_version} # latest stable preferred
           | nvm use #{node_version}
           | nvm alias default #{node_version}
 
         +section('Install Borg')
-        pre: code
+        pre: code.nohighlight
           | npm install borg -g
 
         +section('Generate a New Project')
-        pre: code
+        pre: code.nohighlight
           | borg init Devops
           | cd Devops/
         p
@@ -66,7 +71,7 @@ block content
           |  one.
 
         +section('Explore Help')
-        pre: code
+        pre: code.nohighlight
           | borg help
 
         +chapter('Cloud Integration')
@@ -78,14 +83,14 @@ block content
 
         +section('Amazon Web Services')
         p This integration depends on the AWS CLI utility being installed:
-        pre: code
+        pre: code.nohighlight
           | cd /tmp
           | wget https://s3.amazonaws.com/aws-cli/awscli-bundle.zip
           | unzip awscli-bundle.zip
           | sudo ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
           | aws --version # test
         p and configured:
-        pre: code
+        pre: code.nohighlight
           | aws configure
           | Access Key ID: your-aws-access-key-id
           | Secret Access Key: your-aws-secret-key
@@ -154,7 +159,7 @@ block content
             br
 
         +section('Directory structure')
-        pre: code
+        pre: code.nohighlight
           | attributes/		JSON and CSON files; see 
           a(href="#attributes") Attributes
           |  chapter below
@@ -511,7 +516,7 @@ block content
         p: strong A 
           code networks.coffee
           |  structure like:
-        pre: code
+        pre: code.cson
           | global:
           |   ssh_port: 3562
           | datacenters:
@@ -534,7 +539,7 @@ block content
         p: strong Will be merged into a 
           code @networks
           |  object, in scope from within scripts:
-        pre: code
+        pre: code.cson
           | @networks.datacenters['aws-ca'].groups['prod-myproject'].servers['my-app'].instances['01'] =
           |   aws_size: 'm3.xlarge'
           |   secondary_ip: '1.2.3.4'
@@ -562,7 +567,7 @@ block content
           | But there is also a shortcut to the current server’s attributes--
           | which in the above case, if we pretend the current server is my-app02, 
           | would be:
-        pre: code
+        pre: code.cson
           | @server =
           |   aws_size: 't2.micro'
           |   secondary_ip: '1.2.3.5'
@@ -586,7 +591,7 @@ block content
         p
           | For example, we can use this to 
           | dynamically reference other attributes, like so:
-        pre: code
+        pre: code.coffee
           | global:
           |   aws_security_groups: -> [ @server.env +’-’+ @server.type ]
         p
@@ -633,21 +638,21 @@ block content
         +section('Debugging')
         pre: code
           | @log()
-        pre: code
+        pre: code.nohighlight
           | borg debug
 
         +section('Asynchronous Flow Control')
-        pre: code
+        pre: code.coffee
           | @then
           | @call
           | @inject_flow (end) =>
           | @die()
 
         +section('Cryptography')
-        pre: code
+        pre: code.coffee
           | @encrypt()
           | @decrypt()
-        pre: code
+        pre: code.nohighlight
           | borg encrypt
 
         +section('Iteration')

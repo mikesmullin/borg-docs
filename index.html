@@ -29,18 +29,22 @@
           <h2 id="getting-started">1. Getting Started</h2>
           <h3 id="install-node.js">1.1. Install Node.JS</h3>
           <p>Using <a href="https://github.com/creationix/nvm">NVM </a> to install <a href="http://nodejs.org">Node.JS</a> is recommended.</p>
-          <pre><code>curl https://raw.github.com/creationix/nvm/master/install.sh | sh
+          <pre><code class="nohighlight">curl https://raw.github.com/creationix/nvm/master/install.sh | sh
 nvm install v0.10.28 # latest stable preferred
 nvm use v0.10.28
 nvm alias default v0.10.28</code></pre>
           <h3 id="install-borg">1.2. Install Borg</h3>
-          <pre><code>npm install borg -g</code></pre>
+          <pre><code class="nohighlight">npm install borg -g</code></pre>
           <h3 id="generate-a-new-project">1.3. Generate a New Project</h3>
-          <pre><code>borg init Devops
+          <pre><code class="nohighlight">borg init Devops
 cd Devops/</code></pre>
-          <p>Or, clone an <a href="https://github.com/mikesmullin/borg-sample-project">existing</a> one.</p>
+          <p>Or, hit the ground running by cloning our <a href="https://github.com/mikesmullin/borg-sample-project">existing sample project</a> which can produce a web server hosting a mirror of this documentation.</p>
           <h3 id="explore-help">1.4. Explore Help</h3>
-          <pre><code>borg help</code></pre>
+          <p>The <code>borg</code> <strong>Command Line Interface (<a href="http://en.wikipedia.org/wiki/Command-line_interface">CLI</a>)</strong> contains many commands which are not documented here. That documentation
+            is expected to be accessed directly, beginning with the following command:
+          </p>
+          <pre><code class="nohighlight">borg help</code></pre>
+          <p><strong style="color:#999">NOTICE:</strong> Most<code>borg</code> CLI commands require your working directory to be the project root.</p>
           <h2 id="cloud-integration">2. Cloud Integration</h2>
           <p>
             Though abstracted to integrate with any cloud provider,
@@ -48,13 +52,13 @@ cd Devops/</code></pre>
           </p>
           <h3 id="amazon-web-services">2.1. Amazon Web Services</h3>
           <p>This integration depends on the AWS CLI utility being installed:</p>
-          <pre><code>cd /tmp
+          <pre><code class="nohighlight">cd /tmp
 wget https://s3.amazonaws.com/aws-cli/awscli-bundle.zip
 unzip awscli-bundle.zip
 sudo ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
 aws --version # test</code></pre>
           <p>and configured:</p>
-          <pre><code>aws configure
+          <pre><code class="nohighlight">aws configure
 Access Key ID: your-aws-access-key-id
 Secret Access Key: your-aws-secret-key</code></pre>
           <p>For more information, please see:<br><a href="http://docs.aws.amazon.com/AWSEC2/latest/CommandLineReference/set-up-ec2-cli-linux.html">Setting Up the Amazon EC2 Command Line Interface Tools</a></p>
@@ -73,7 +77,7 @@ Secret Access Key: your-aws-secret-key</code></pre>
             <li> <strong>borg assemble: </strong>to both <code>create</code> and then <code>assimilate</code>.<br><br></li>
           </ul>
           <h3 id="directory-structure">3.2. Directory structure</h3>
-          <pre><code>attributes/		JSON and CSON files; see <a href="index.html#attributes">Attributes</a> chapter below
+          <pre><code class="nohighlight">attributes/		JSON and CSON files; see <a href="index.html#attributes">Attributes</a> chapter below
   networks.coffee	your datacenter and server hierarchy
   memory.json		remembers details from cloud provider api interactions
 scripts/		your Scripts; see <a href="index.html#scripts">Scripts</a> chapter below
@@ -90,13 +94,12 @@ scripts/		your Scripts; see <a href="index.html#scripts">Scripts</a> chapter bel
           <p>
             There are times when it is appropriate for an attribute to be 
             defined in more than one place. Borg knows which value to use 
-            in these cases because it merges attribute files in a specific 
-            order at runtime. For example, your attribute definitions will 
+            in these cases because it merges attribute files in a <a href="index.html#attribute-precedence">specific order</a> at runtime. For example, your attribute definitions will 
             override any defaults provided by third-party submodules. 
           </p>
           <p>
             The resulting attribute values are accessible to all scripts 
-            from within the <code>@server</code> variable, which is also pretty printed 
+            from within the <code><a href="index.html#@server-object">@server</a></code> object, which is also pretty printed 
             to the debug log at the beginning of each run.
           </p>
           <h3 id="attribute-precedence">4.1. Attribute Precedence</h3>
@@ -118,7 +121,7 @@ scripts/		your Scripts; see <a href="index.html#scripts">Scripts</a> chapter bel
             <tbody>
               <tr>
                 <td>
-                  <p><strong>1. Hard-coded</strong><br>scripts/*/*.coffee<br>scripts/*/templates/*/*.coffee<br><em>(un-overridable precedence)</em></p>
+                  <p><strong id="hard-coded-attributes">1. Hard-coded Attributes</strong><br>scripts/*/*.coffee<br>scripts/*/templates/*/*.coffee<br><em>(un-overridable precedence)</em></p>
                   <p>
                     Always scrutinize whether there are values in
                     your scripts which would be more useful as attributes
@@ -152,7 +155,7 @@ scripts/		your Scripts; see <a href="index.html#scripts">Scripts</a> chapter bel
               </tr>
               <tr>
                 <td>
-                  <p><strong>2. CLI <code>--locals=</code> Attributes</strong><br>Process arg w/ CSON value<br><em>(high precedence)</em></p>
+                  <p><strong id="cli-attributes">2. CLI <code>--locals=</code> Attributes</strong><br>Process arg w/ CSON value<br><em>(high precedence)</em></p>
                 </td>
                 <td>
                   <p><strong>Purpose:</strong><br>Define short-term instance attribute values unique to this run.</p>
@@ -169,7 +172,7 @@ scripts/		your Scripts; see <a href="index.html#scripts">Scripts</a> chapter bel
               </tr>
               <tr>
                 <td>
-                  <p><strong>3. Global Attributes</strong><br>attributes/networks.coffee<br>in the <code>global:</code> key</p>
+                  <p><strong id="global-attributes">3. Global Attributes</strong><br>attributes/networks.coffee<br>in the <code>global:</code> key</p>
                 </td>
                 <td>
                   <p><strong>Purpose:</strong><br>Define long-term instance attribute default values in the most general way possible.</p>
@@ -178,7 +181,7 @@ scripts/		your Scripts; see <a href="index.html#scripts">Scripts</a> chapter bel
               </tr>
               <tr>
                 <td>
-                  <p><strong>4. Datacenter Attributes</strong><br>attributes/networks.coffee<br>in the <code>datacenters:</code> key</p>
+                  <p><strong id="datacenter-attributes">4. Datacenter Attributes</strong><br>attributes/networks.coffee<br>in the <code>datacenters:</code> key</p>
                 </td>
                 <td>
                   <p><strong>Purpose:</strong><br>Define long-term attribute values per-datacenter,
@@ -206,7 +209,7 @@ scripts/		your Scripts; see <a href="index.html#scripts">Scripts</a> chapter bel
               </tr>
               <tr>
                 <td>
-                  <p><strong>5. Server Attributes</strong><br>scripts/servers/*.coffee<br>within the exported function <code>assimilate: -></code></p>
+                  <p><strong id="server-attributes">5. Server Attributes</strong><br>scripts/servers/*.coffee<br>within the exported function <code>assimilate: -></code></p>
                   <p>
                     Usually there is at least one of these files for each type
                     of server.
@@ -226,7 +229,7 @@ scripts/		your Scripts; see <a href="index.html#scripts">Scripts</a> chapter bel
               </tr>
               <tr>
                 <td>
-                  <p><strong>6. Script Attributes</strong><br>scripts/*/attributes/*/*.coffee</p>
+                  <p><strong id="script-attributes">6. Script Attributes</strong><br>scripts/*/attributes/*/*.coffee</p>
                 </td>
                 <td>
                   <p><strong>Purpose:</strong><br>The most appropriate place for a script author to declare
@@ -247,7 +250,7 @@ scripts/		your Scripts; see <a href="index.html#scripts">Scripts</a> chapter bel
               </tr>
               <tr>
                 <td>
-                  <p><strong>7. Memory Attributes</strong><br>attributes/memory.json<br><em>(lowest precedence)</em></p>
+                  <p><strong id="memory-attributes">7. Memory Attributes</strong><br>attributes/memory.json<br><em>(lowest precedence)</em></p>
                   <p>Users should avoid modifying this file directly.</p>
                 </td>
                 <td>
@@ -290,8 +293,8 @@ scripts/		your Scripts; see <a href="index.html#scripts">Scripts</a> chapter bel
             <li><code>datacenters.*.groups.*.servers.*.instances.*.*</code></li>
           </ol>
           <h3 id="@networks-object">4.3. @networks object</h3>
-          <p><strong>A <code>networks.coffee</code> structure like:</strong></p>
-          <pre><code>global:
+          <p>A <code>networks.coffee</code> structure like:</p>
+          <pre><code class="cson">global:
   ssh_port: 3562
 datacenters:
   aws-ca:
@@ -309,8 +312,8 @@ datacenters:
                  secondary_ip: '1.2.3.4'
                '02':
                  secondary_ip: '1.2.3.5'</code></pre>
-          <p><strong>Will be merged into a <code>@networks</code> object, in scope from within scripts:</strong></p>
-          <pre><code>@networks.datacenters['aws-ca'].groups['prod-myproject'].servers['my-app'].instances['01'] =
+          <p>Will be merged into a <code>@networks</code> object, in scope from within scripts:</p>
+          <pre><code class="cson">@networks.datacenters['aws-ca'].groups['prod-myproject'].servers['my-app'].instances['01'] =
   aws_size: 'm3.xlarge'
   secondary_ip: '1.2.3.4'
   env: 'prod'
@@ -336,7 +339,7 @@ datacenters:
             which in the above case, if we pretend the current server is my-app02, 
             would be:
           </p>
-          <pre><code>@server =
+          <pre><code class="cson">@server =
   aws_size: 't2.micro'
   secondary_ip: '1.2.3.5'
   env: 'prod'
@@ -354,7 +357,7 @@ datacenters:
             For example, we can use this to 
             dynamically reference other attributes, like so:
           </p>
-          <pre><code>global:
+          <pre><code class="coffee">global:
   aws_security_groups: -> [ @server.env +’-’+ @server.type ]</code></pre>
           <p>
             We love that we can take this type of data-as-code approach, 
@@ -368,29 +371,132 @@ datacenters:
             These can be based on parts of the server name 
             (e.g., <code>@server.type</code>, <code>@server.id</code>, <code>@server.subproject</code>, <code>@server.env</code>, <code>@server.tld</code>, <code>@server.fqdn</code>) or position in the hierarchy (e.g., <code>@server.datacenter</code>, <code>@server.group</code>).
           </p>
-          <h2 id="scripts">5. Scripts</h2>
-          <p><strong>WARNING: </strong>From this chapter onward are mostly placeholders; its a
-            Work in Progress (WIP).
+          <h2 id="resources">5. Resources</h2>
+          <p>All resources are just <em><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">functions</a></em>.
+            Within every script and callback--anyplace that would typically
+            be considered a space the average devops scripter would occupy,
+            there is a carefully crafted object provided as the reference
+            of <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/this">this</a></code> in Javascript or <code><a href="http://coffeescript.org/#operators">@</a></code> in CoffeeScript. It is where the <code><a href="index.html#@server-object">@server</a></code> object lives, and it is also where all resources can be found.
           </p>
-          <h3 id="importing">5.1. Importing</h3>
-          <pre><code>@import @cwd, 'scripts', 'your-script'</code></pre>
-          <h3 id="debugging">5.2. Debugging</h3>
-          <pre><code>@log()</code></pre>
-          <pre><code>borg debug</code></pre>
-          <h3 id="asynchronous-flow-control">5.3. Asynchronous Flow Control</h3>
-          <pre><code>@then
+          <p>Borg's resources are divided into three categories:</p>
+          <ul>
+            <li><strong><a href="index.html#scripts">Core Resources</a>:</strong> Resources referenced by Borg core itself;
+              these are shipped with and are inseparable from Borg.
+              They can generally be considered part of the <strong>Domain Specific Language (<a href="http://en.wikipedia.org/wiki/Domain-specific_language">DSL</a>)</strong> which all scripts use. There are deliberately as few as
+              possible defined.<br><br>
+            </li>
+            <li><strong><a href="index.html#common-resources">Common Resources</a>:</strong> Resources most people expect to be there, but aren't needed by Borg core;
+              these are packaged externally like a third-party resource, and installed as a Git submodule by <code>borg init</code> with all new projects. That is so anyone who might decide one of its
+              resources isn't good enough for them can replace, modify, or override it.<br><br>
+            </li>
+            <li><strong><a href="index.html#third-party-resources">Third-Party Resources</a>:</strong> Resources which clearly wouldn't be used by every project;
+              these are packaged externally and installed as <a href="http://git-scm.com/book/en/v2/Git-Tools-Submodules">
+                <Git>submodules</Git></a> by <code>borg install</code> as-needed. That is so anyone can author a set of resources and share 
+              with others as easily as uploading to <a href="http://github.com">Github.com</a>.<br><br>
+            </li>
+          </ul>
+          <p>Each of these are discussed further in their own separate chapters below.</p>
+          <h2 id="scripts">6. Scripts</h2>
+          <p>Writing scripts that define <em>how you want your servers built</em> is the whole purpose of Borg, and every other feature is only a facilitator
+            toward that goal. The focus surrounds complete control and convenience--
+            for a <em><a href="http://i.imgur.com/dBNfqlQ.jpg">programmer</a></em>; someone who dreams in code and works in shells every day.
+          </p>
+          <h3 id="defining-servers">6.1. Defining Servers</h3>
+          <p>A server definition links your scripts and your <a href="index.html#datacenter-attributes">datacenter attributes</a> to
+            a single <strong>Fully Qualified Domain Name (<a href="https://kb.iu.edu/d/aiuv">FQDN</a>)</strong> which you can use on the CLI,
+            according to the custom naming convention below.
+          </p>
+          <p><strong>FQDN Format:</strong></p>
+          <pre><code class="nohighlight">[<a href="index.html#fqdn-datacenter">datacenter</a>]-[<a href="index.html#fqdn-env">env</a>]-[<a href="index.html#fqdn-type">type</a>][<a href="index.html#fqdn-instance">instance</a>]-[<a href="index.html#fqdn-subproject">subproject</a>].[<a href="index.html#fqdn-tld">tld</a>]</code></pre>
+          <p><strong>Definitions:</strong></p>
+          <ul>
+            <li><strong id="fqdn-datacenter">datacenter:</strong> Must uniquely match a key you define inside the <code>datacenters:</code> key.<br>(e.g., <code>aws-ca</code> might signify the Amazon Web Services datacenter in California)<br><br></li>
+            <li><strong id="fqdn-env">env:</strong> Must match an<code>env:</code> key value you define.<br>Unique match determined by <code>datacenter</code>+<code>env</code>. <br>(e.g., <code>dev</code>, <code>stage</code>, <code>prod</code> are recommended)<br><br></li>
+            <li><strong id="fqdn-type">type:</strong> Must match a key you define inside a <code>servers:</code> key.<br>Unique match determined by <code>datacenter</code>+<code>env</code>+<code>type</code>. <br>(e.g., <code>web</code> might represent horizontally scaling servers hosting your website)<br><br></li>
+            <li><strong id="fqdn-instance">instance:</strong> Must match a key you define inside an <code>instances:</code> key.<br>Unique match determined by <code>datacenter</code>+<code>env</code>+<code>type</code>+<code>instance</code>. <br>(e.g., <code>01</code> might represent the first instance of many more servers like it)<br><br></li>
+            <li><strong id="fqdn-subproject">subproject</strong> (Optional):
+               Must match a <code>subproject:</code> key value you define anywhere below the <code>datacenters:</code> key. <br>Unique match determined by <code>datacenter</code>+<code>subproject</code>. <br>(e.g., <code>mobile</code> might represent the mobile counterpart to your desktop product,
+              if the architecture were significantly different)<br><br>
+            </li>
+            <li><strong id="fqdn-tld">tld:</strong> (Optional):
+               Must match a <code>tld:</code> key value you define anywhere below the <code>datacenters:</code> or <code>globals:</code> keys. 
+              Does not have to be unique.<br>(e.g., <code>.example.org</code> might be your corporate domain)
+            </li>
+          </ul>
+          <p>All definitions of valid values for your project happen inside the <code><a href="index.html#@networks-object">networks.coffee</a></code> file.</p>
+          <p>
+            The motivation is to simplify
+            command-line interactions so:
+          </p>
+          <ol>
+            <li>Commands remain simple.</li>
+            <li>Complicated logic connecting everything together remains in code where it belongs.</li>
+            <li>
+              <p style="margin-top: 0">
+                Borg can guess your intentions when naming previously undefined new servers,
+                and do the right thing. For example, if all you have defined is:
+              </p>
+              <pre><code class="cson">datacenters:
+  'aws-ca':
+    tld: '.example.org'
+    groups:
+      'mikes-dev':
+         env: 'dev'</code></pre>
+              <p> and a <code>scripts/servers/web.coffee</code> server definition, Borg will only pause briefly to prompt for 
+                human confirmation that you mean
+                to permanently define new servers (via <code><a href="index.html#memory-attributes">memory.json</a></code>) when you specify commands like:
+              </p>
+              <pre><code class="nohighlight">borg create aws-ca-dev-web01.example.org
+borg assimilate aws-ca-dev-web02.example.org
+borg assemble aws-ca-dev-web99.example.org</code></pre>
+              <p>
+                ...and carry on to do exactly what you had intended. Any further
+                commands referencing those FQDN will be treated exactly as any
+                other pre-defined server, since they are remembered by Borg until <code>borg destroy</code> is called, or they are otherwise deleted from <code>memory.json</code>.
+              </p>
+            </li>
+          </ol>
+          <h3 id="importing-code">6.2. Importing Code</h3>
+          <p>The import declaration takes arguments similarly to <code><a href="http://nodejs.org/api/path.html#path_path_join_path1_path2">path.join()</a></code>. The <code>@cwd</code> variable is a string provided by Borg holding the result of <code><a href="http://nodejs.org/api/process.html#process_process_cwd">process.cwd()</a></code>which is expected to be the absolute path to the root of your
+            Borg project.
+          </p>
+          <pre><code class="coffee">@import @cwd, 'scripts', 'vendor', 'redis', 'server'</code></pre>
+          <h3 id="asynchronous-flow-control">6.3. Asynchronous Flow Control</h3>
+          <pre><code class="coffee">@then
 @call
-@inject_flow (end) =>
-@die()</code></pre>
-          <h3 id="cryptography">5.4. Cryptography</h3>
-          <pre><code>@encrypt()
+@inject_flow (end) =></code></pre>
+          <h3 id="console-debugging">6.4. Console Debugging</h3>
+          <p>
+            Of course, some people prefer to temporarily sprinkle log
+            statements throughout their code and then run it to see
+            what order they appear on the console log:
+          </p>
+          <pre><code class="coffee">@then @log "Reaching here? Let's see what variable x is: #{x}."
+console.log() # the non-async way</code></pre>
+          <p>
+            Sometimes also aborting just after the point of interest,
+            to prevent going too far or taking a long time between
+            iterations:
+          </p>
+          <pre><code class="coffee">@die "The reason is I am debugging. This is only temporary."
+process.exit 1 # the non-async way</code></pre>
+          <p>Its a valid strategy and occasionally faster than other methods.</p>
+          <h3 id="interactive-debugging">6.5. Interactive Debugging</h3>
+          <p>You can start also Borg with the <code>debug</code> parameter to launch a <a href="http://www.google.com/chrome/">Chrome</a> browser using <a href="https://developer.chrome.com/devtools">DevTools</a> to catch breakpoints, pause, step over,
+            step into, step out, continue, and inspect the stack, backtrace, 
+            etc. From there the experience is very similar to any other 
+            Javascript, Node.JS, or CoffeeScript application.
+          </p>
+          <pre><code class="nohighlight">borg debug</code></pre>
+          <h3 id="automated-testing">6.6. Automated Testing</h3>
+          <h3 id="cryptography">6.7. Cryptography</h3>
+          <pre><code class="coffee">@encrypt()
 @decrypt()</code></pre>
-          <pre><code>borg encrypt</code></pre>
-          <h3 id="iteration">5.5. Iteration</h3>
+          <pre><code class="nohighlight">borg encrypt</code></pre>
+          <h3 id="iteration">6.8. Iteration</h3>
           <pre><code>@each()
 @eachServer()</code></pre>
-          <h2 id="resources">6. Resources</h2>
-          <h3 id="common">6.1. Common</h3>
+          <h2 id="common-resources">7. Common Resources</h2>
           <p>There is a third-party submodule that comes with every new <code>borg init</code> and that is the borg-scripts/resources repository. It holds the 
             most basic functions you would expect to use in any project.
           </p>
@@ -428,32 +534,32 @@ datacenters:
               it to be added sooner if someone will volunteer the pull request.
             </p>
           </ol>
-          <pre><code>@execute()
-@package_update()
-@install()
-@uninstall()
-@directory()
-@chown()
-@chmod()
-@template()
-@upload()
-@download()
-@link()
-@remote_file_exists()
-@append_line_to_file()
-@replace_line_in_file()
-@user()
-@group()
-@deploy()
-@reboot()</code></pre>
-          <h3 id="third-party-submodules">6.2. Third-Party Submodules</h3>
+          <h3 id="@execute()">7.1. @execute()</h3>
+          <h3 id="@package-update()">7.2. @package_update()</h3>
+          <h3 id="@install()">7.3. @install()</h3>
+          <h3 id="@uninstall()">7.4. @uninstall()</h3>
+          <h3 id="@directory()">7.5. @directory()</h3>
+          <h3 id="@chown()">7.6. @chown()</h3>
+          <h3 id="@chmod()">7.7. @chmod()</h3>
+          <h3 id="@template()">7.8. @template()</h3>
+          <h3 id="@upload()">7.9. @upload()</h3>
+          <h3 id="@download()">7.10. @download()</h3>
+          <h3 id="@link()">7.11. @link()</h3>
+          <h3 id="@remote-file-exists()">7.12. @remote_file_exists()</h3>
+          <h3 id="@append-line-to-file()">7.13. @append_line_to_file()</h3>
+          <h3 id="@replace-line-in-file()">7.14. @replace_line_in_file()</h3>
+          <h3 id="@user()">7.15. @user()</h3>
+          <h3 id="@group()">7.16. @group()</h3>
+          <h3 id="@deploy()">7.17. @deploy()</h3>
+          <h3 id="@reboot()">7.18. @reboot()</h3>
+          <h2 id="third-party-resources">8. Third-Party Resources</h2>
           <pre><code>borg install
 borg update</code></pre>
           <p>The documentation for resources can be found in their individual repos.</p>
           <p>For a listing of available repos, see:<br><a href="https://github.com/borg-scripts">https://github.com/borg-scripts</a></p>
-          <h2 id="contributing">7. Contributing</h2>
+          <h2 id="contributing">9. Contributing</h2>
           <p>Your contributions are welcome via Github.com.</p>
-          <h3 id="issuing-a-pull-request">7.1. Issuing a Pull Request</h3>
+          <h3 id="issuing-a-pull-request">9.1. Issuing a Pull Request</h3>
           <ol>
             <li>
               <p>Fork and clone</p>
@@ -505,19 +611,46 @@ borg update</code></pre>
                   <li><a href="index.html#calculated-attributes">Calculated Attributes</a></li>
                 </ul>
               </li>
+              <li><a href="index.html#resources">Resources</a>
+                <ul>
+                </ul>
+              </li>
               <li><a href="index.html#scripts">Scripts</a>
                 <ul>
-                  <li><a href="index.html#importing">Importing</a></li>
-                  <li><a href="index.html#debugging">Debugging</a></li>
+                  <li><a href="index.html#defining-servers">Defining Servers</a></li>
+                  <li><a href="index.html#importing-code">Importing Code</a></li>
                   <li><a href="index.html#asynchronous-flow-control">Asynchronous Flow Control</a></li>
+                  <li><a href="index.html#console-debugging">Console Debugging</a></li>
+                  <li><a href="index.html#interactive-debugging">Interactive Debugging</a></li>
+                  <li><a href="index.html#automated-testing">Automated Testing</a></li>
                   <li><a href="index.html#cryptography">Cryptography</a></li>
                   <li><a href="index.html#iteration">Iteration</a></li>
                 </ul>
               </li>
-              <li><a href="index.html#resources">Resources</a>
+              <li><a href="index.html#common-resources">Common Resources</a>
                 <ul>
-                  <li><a href="index.html#common">Common</a></li>
-                  <li><a href="index.html#third-party-submodules">Third-Party Submodules</a></li>
+                  <li><a href="index.html#@execute()">@execute()</a></li>
+                  <li><a href="index.html#@package-update()">@package_update()</a></li>
+                  <li><a href="index.html#@install()">@install()</a></li>
+                  <li><a href="index.html#@uninstall()">@uninstall()</a></li>
+                  <li><a href="index.html#@directory()">@directory()</a></li>
+                  <li><a href="index.html#@chown()">@chown()</a></li>
+                  <li><a href="index.html#@chmod()">@chmod()</a></li>
+                  <li><a href="index.html#@template()">@template()</a></li>
+                  <li><a href="index.html#@upload()">@upload()</a></li>
+                  <li><a href="index.html#@download()">@download()</a></li>
+                  <li><a href="index.html#@link()">@link()</a></li>
+                  <li><a href="index.html#@remote-file-exists()">@remote_file_exists()</a></li>
+                  <li><a href="index.html#@append-line-to-file()">@append_line_to_file()</a></li>
+                  <li><a href="index.html#@replace-line-in-file()">@replace_line_in_file()</a></li>
+                  <li><a href="index.html#@user()">@user()</a></li>
+                  <li><a href="index.html#@group()">@group()</a></li>
+                  <li><a href="index.html#@deploy()">@deploy()</a></li>
+                  <li><a href="index.html#@reboot()">@reboot()</a></li>
+                </ul>
+              </li>
+              <li><a href="index.html#third-party-resources">Third-Party Resources</a>
+                <ul>
                 </ul>
               </li>
               <li><a href="index.html#contributing">Contributing</a>
@@ -541,5 +674,12 @@ borg update</code></pre>
       </footer>
     </div>
     <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Rambla:400,700|Source+Sans+Pro:400,600">
+    <link rel="stylesheet" href="stylesheets/monokai_sublime.css">
+    <script src="behaviors/highlight.pack.js"></script>
+    <script>
+      hljs.initHighlightingOnLoad();
+      
+      
+    </script>
   </body>
 </html>

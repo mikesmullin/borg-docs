@@ -493,27 +493,90 @@ module.exports =
             the equivalent behavior as a set of user-defined functions. Borg provides
             its own set of functions for this purpose.
           </p>
-          <p>From the <strong>script developer</strong> perspective, all you need to know is <code>@then()</code>.</p>
-          <p>
-             
-            You can think of <code>@then()</code> as an alias for <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push">Array::push()</a></code> on an array holding a list of your functions
+          <p>From the <strong>script developer</strong> perspective, all you need to know is <code>@then()</code>; you can think of it as an alias for <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push">Array::push()</a></code> on an array holding a list of your functions
             which will be executed in-order, all-at-once, later
             after all scripts have been processed.
           </p>
           <p>For example:</p>
-          <pre><code>@then (cb) =>
-  console.log "This won't be executed until later."</code></pre>
-          <p>From the <strong>resource developer</strong> perspective, you now understand why your functions need a compatible signature:</p>
-          <pre><code class="coffee">module.exports = ->
-  <a href="https://lodash.com/docs#assign">_.assign</a> @,
-   super_fine_resource: (pkgs, [o]...) => @inject_flow =>
-     # your code here</code></pre>
-          <p>As you get further along, you may also find some of these resources useful:</p>
-          <pre><code class="coffee">@inject_flow (end) =>
-@call</code></pre>
-          <h3 id="console-debugging">6.4. Console Debugging</h3>
+          <pre><code class="coffee">@then (cb) =>
+  console.log "This won't be executed until later."
+  cb()</code></pre>
           <p>
-            Of course, some people prefer to temporarily sprinkle log
+            Except--instead of passing an anonymous function you've just defined--most
+            of the time you are passing strings into predefined resource functions
+            which do the heavy lifting, and hide the passing of callbacks behind an 
+            alluringly simple syntax. Your scripts look more like this:
+          </p>
+          <pre><code class="coffee">@then @log "This won't be executed until later."</code></pre>
+          <p>Which means, from the <strong>resource developer</strong> perspective, your resource functions are defined with a compatible signature, like this:</p>
+          <pre><code class="coffee">module.exports = -> <a href="https://lodash.com/docs#assign">_.assign</a> @,
+ some_resource: (names, [o]...) => (cb) =>
+   # your code here
+   cb()</code></pre>
+          <p>
+            Actually, most times you want to continue using async flows inside your
+            resource. For that we have <code>@inject_flow()</code> which looks like this:
+          </p>
+          <pre><code class="coffee">module.exports = -> _.assign @,
+ sync_clock: (names, [o]...) => @inject_flow =>
+   @then <a href="index.html#@execute()">@execute</a> "sudo ntpdate -s time.nist.gov"
+   # no callback hell pyramids here</code></pre>
+          <p>
+            There are three major reasons why we require asynchronous control flow
+            to get anything done in Borg, versus a DSL that is strictly blocking,
+            or simply pasting one long bash script in a string block for that matter.
+          </p>
+          <ol>
+            <li>
+              Its critical to the extensibility and dynamism of the attribute system
+              that we have a two-pass system of script evaluation. The first pass
+              being the one defining attributes and enqueuing functions to the <a href="http://strongloop.com/strongblog/node-js-event-loop/">giant</a> <a href="http://blog.mixu.net/2011/02/01/understanding-the-node-js-event-loop/">event loop</a> <a href="http://blog.carbonfive.com/2013/10/27/the-javascript-event-loop-explained/">in</a> <a href="http://stackoverflow.com/questions/19822668/what-exactly-is-a-node-js-event-loop-tick">the</a> <a href="http://chimera.labs.oreilly.com/books/1234000001808/ch03.html#chap3_id35941348">sky</a>. The second pass being the one actually performing actions on the
+              remote server during orchestration--possibly re-evaluating
+              attributes since the first pass, in reaction to a server response,
+              or another script.<br><br>
+            </li>
+            <li>
+              Eventually, your script could be super-parallelized; like multiple
+              SSH connections to one remote server, performing complimentary
+              steps at the same time. Admittedly this application
+              has yet to be demonstrated.<br><br>
+            </li>
+            <li>
+              Some resources might actually be using functions that are asynchronous
+              even though your script code may not.
+            </li>
+          </ol>
+          <p>
+            There are more resources related to async that might become
+            useful as you get further along. You can find them by reviewing
+            examples in the common <code><a href="https://github.com/borg-scripts/resources/blob/master/index.coffee">resources</a></code> resource, and in <code><a href="https://github.com/mikesmullin/borg/blob/master/Borg.coffee">Borg.coffee</a></code>.
+          </p>
+          <h3 id="cryptography">6.4. Cryptography</h3>
+          <p>
+            You are encouraged to use the following resources
+             to obfuscate strings in your project repository.
+            Its a smart thing to do with sensitive information,
+            which would then be relatively safe even if your
+            devops scripts were accidentally leaked.
+          </p>
+          <pre><code class="coffee">@then @die @encrypt "example utf8 string"
+decrypted_string = @decrypt "example base64 string"</code></pre>
+          <p>The cipher is OpenSSL <a href="http://en.wikipedia.org/wiki/Advanced_Encryption_Standard">AES-256-CBC</a>. The key is derived
+            from a file in your project root named <code>./secret</code> which typically contains a random 512-byte base64 string
+            generated by <code>borg init</code> when your project is first initialized. This file
+            should never be shared in the same way the project
+            source is, or the encryption is useless.
+          </p>
+          <p>
+            Likewise, you can also encrypt binary data files
+            your scripts are expected to upload to remote servers,
+            such as individualized software licenses, using the Borg CLI:
+          </p>
+          <pre><code class="nohighlight">borg encrypt # see help</code></pre>
+          <p>and then passing the<code>decrypt: true</code> option when using resources like <code>@upload()</code> to transmit the local file to its remote location on the server.</p>
+          <h3 id="console-debugging">6.5. Console Debugging</h3>
+          <p>
+            Some people prefer to temporarily sprinkle log
             statements throughout their code and then run it to see
             what order they appear on the console log:
           </p>
@@ -527,18 +590,65 @@ console.log() # the non-async way</code></pre>
           <pre><code class="coffee">@then @die "I am debugging. This is only temporary."
 process.exit 1 # the non-async way</code></pre>
           <p>Its a valid strategy and occasionally faster than other methods.</p>
-          <h3 id="interactive-debugging">6.5. Interactive Debugging</h3>
+          <h3 id="interactive-debugging">6.6. Interactive Debugging</h3>
           <p>You can execute any <code>borg</code> CLI command with <code>debug</code> as the first parameter to launch a <a href="http://www.google.com/chrome/">Chrome</a> browser using <a href="https://developer.chrome.com/devtools">DevTools</a> . This will let you set and catch <code>debugger</code> breakpoints, pause, step over,
             step into, step out, continue, and inspect stack, backtrace, 
             variables, etc. From there the experience is very similar to any other 
             Javascript, Node.JS, or CoffeeScript application.
           </p>
           <pre><code class="nohighlight">borg debug assimilate aws-ca-dev-web01.example.org</code></pre>
-          <h3 id="automated-testing">6.6. Automated Testing</h3>
-          <h3 id="cryptography">6.7. Cryptography</h3>
-          <pre><code class="coffee">@encrypt()
-@decrypt()</code></pre>
-          <pre><code class="nohighlight">borg encrypt</code></pre>
+          <h3 id="test-provisioning">6.7. Test Provisioning</h3>
+          <p>There is a <code>test</code> mode you can enter with the Borg CLI, which keeps
+            a separate list of servers provisioned in the cloud. This way, while
+            testing, servers you create are still created at your cloud provider--as
+            not to differ from the production environment hardware--but they
+            have a "test-" prefix to set them apart.
+          </p>
+          <p>For example:</p>
+          <pre><code class="nohighlight">borg test assimilate aws-ca-dev-web01.example.org</code></pre>
+          <p>
+            While in test mode, you can perform bulk operations such as
+            provisioning every server from your dev environment to see
+            if recent script modifications broke anything.
+          </p>
+          <pre><code class="nohighlight">borg test assimilate aws-ca-dev</code></pre>
+          <p>The fourth argument is matching on regular expression.</p>
+          <p>For more information, see:</p>
+          <pre><code class="nohighlight">borg help test</code></pre>
+          <h3 id="integration-testing">6.8. Integration Testing</h3>
+          <p><strong style="color:#999">NOTICE:</strong> This feature is currently in development.</p>
+          <p>A feature using <a href="http://mochajs.org/">Mocha</a> is planned to run tests in CoffeeScript that are able to
+            execute commands for testing purposes.
+            For example, it might be useful if, after a new machine is cooked,
+            Borg were able to automatically connect to one or more of its peer servers
+            as defined in <code>network.coffee</code> and perform a command <code>nc -vz s &lt;public_ip&gt; &lt;some_port&gt;</code> in order to determine if important ports were open to them.
+          </p>
+          <p>
+            This type of test would essentially be attempting to reproduce, from the
+            end-user's perspective, whether or not the assimilation resulted
+            in a working service. You can imagine the output would look something
+            like:
+          </p>
+          <pre><code class="nohighlight">user@host: ~/project$ borg checkup aws-ca-dev-web01.example.org
+test: web:<br><span style="color:lime">&#x2714;</span> web01 was able to connect to redis01 on tcp/6379<br><span style="color:red">&#x2717;</span> web02 was NOT able to connect to redis01 on tcp/6379
+   <span style="color:red">nc: getaddrinfo: Name or service not known</span> 
+ 
+2 test(s) run in 204ms. 1 passed, 1 failed.</code></pre>
+          <h3 id="jobs">6.9. Jobs</h3>
+          <p><strong style="color:#999">NOTICE:</strong> This feature is currently in development.</p>
+          <p>
+            Jobs are essentially partial scripts, which are invoked from 
+            the command-line and perform specific
+            actions of a periodic nature on a remote server.
+            For example, it could
+            restart a service, or perform a software deployment, or
+            truncate logs, or any other routine or mundane task.
+          </p>
+          <p>Jobs are located in <code>scripts/jobs/*.coffee</code>, which have the benefit of being distributed with
+            and utilizing all the accompanying resources. For example, tasks
+            related to the maintenance of a Percona server, such as peforming
+            a backup snapshot, could be distributed along with the<code><a href="https://github.com/borg-scripts/percona">percona</a></code> resource which installs the service.
+          </p>
           <h2 id="common-resources">7. Common Resources</h2>
           <p>There is a third-party submodule that comes with every new <code>borg init</code> and that is the borg-scripts/resources repository. It holds the 
             most basic functions you would expect to use in any project.
@@ -663,10 +773,12 @@ borg update</code></pre>
                   <li><a href="index.html#defining-servers">Defining Servers</a></li>
                   <li><a href="index.html#importing-code">Importing Code</a></li>
                   <li><a href="index.html#asynchronous-flow-control">Asynchronous Flow Control</a></li>
+                  <li><a href="index.html#cryptography">Cryptography</a></li>
                   <li><a href="index.html#console-debugging">Console Debugging</a></li>
                   <li><a href="index.html#interactive-debugging">Interactive Debugging</a></li>
-                  <li><a href="index.html#automated-testing">Automated Testing</a></li>
-                  <li><a href="index.html#cryptography">Cryptography</a></li>
+                  <li><a href="index.html#test-provisioning">Test Provisioning</a></li>
+                  <li><a href="index.html#integration-testing">Integration Testing</a></li>
+                  <li><a href="index.html#jobs">Jobs</a></li>
                 </ul>
               </li>
               <li><a href="index.html#common-resources">Common Resources</a>

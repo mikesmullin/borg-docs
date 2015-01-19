@@ -86,7 +86,7 @@ block content
           | borg help
         p
           strong(style="color:#999") NOTICE:
-          |  Most
+          |  Most 
           code borg
           |  CLI commands require your working directory to be the project root.
 
@@ -126,7 +126,7 @@ block content
             br
           li 
             strong resource: 
-            | named function organizing common steps for reuse across multiple scripts; often with the secondary goal of becoming os agnostic.
+            | named function organizing common steps for reuse across multiple scripts; often with the secondary goal of becoming operating system agnostic.
             br
             br
           li 
@@ -151,7 +151,7 @@ block content
             br
           li 
             strong group: 
-            | another unit available for the grouping of servers; typically named after the environment and project (e.g., a datacenter may contain a group for the production environment of project A as well as the staging environment for project B, both of which contain separate instances of the same type of server)
+            | another layer of organization available for the grouping of servers within datacenters; typically named after the environment and project (e.g., a datacenter may contain a group for the production environment of Project A as well as the staging environment for Project B, both of which contain separate instances of the same type of server)
             br
             br
           li 
@@ -712,8 +712,6 @@ block content
             | with others as easily as uploading to 
             a(href="http://github.com") Github.com
             | .
-            br
-            br
         p
           | Each of these are discussed further in their own separate chapters below.
 
@@ -909,6 +907,43 @@ block content
               | .
 
 
+        p
+          | The basic server definition looks like this:
+        pre: code.coffee
+          | # scripts/servers/web.coffee
+          | module.exports =
+          |   target: ->
+          |     @server.type is 'web'
+
+          |   assimilate: ->
+          |     @import @cwd, 'scripts', 'web'
+        p
+          | The callback function 
+          code target: ->
+          |  is expected to return a 
+          a(href="http://en.wikipedia.org/wiki/Boolean_data_type") boolean
+          |  determining whether the current 
+          code @server
+          |  object matches this server definition. Since this is CoffeeScript,
+          | all statements are expressions, and the last expression of any function
+          | is always returned, unless otherwise specified. So that's exactly
+          | what this example does.
+        p
+          strong(style="color:#999") NOTICE:
+          |  Borg will only process the first match found in 
+          code scripts/servers/*.coffee
+          |  .
+        p
+          | When a match is found, the next callback function 
+          code assimilate: ->
+          |  is executed. From there it is up to you to specify
+          | any commands or 
+          code @import
+          |  declarations that act upon the remote server to
+          | complete orchestration.
+
+
+
 
         +section('Importing Code')
         p
@@ -921,17 +956,106 @@ block content
           |  variable is a string provided by Borg holding the result of 
           code
             a(href="http://nodejs.org/api/process.html#process_process_cwd") process.cwd()
-          | which is expected to be the absolute path to the root of your
+          |  which is expected to be the absolute path to the root of your
           | Borg project.
-
         pre: code.coffee
-          | @import @cwd, 'scripts', 'vendor', 'redis', 'server'
+          |   @import @cwd, 'scripts', 'vendor', 'redis', 'server'
+        p
+          | This will 
+          code: a(href="http://nodejs.org/api/modules.html") require()
+          |  a script located at 
+          code scripts/vendor/redis/server.coffee
+          | , which in this case can be expected to be provided by a third-party 
+          | resource named 
+          code: a(href="https://github.com/borg-scripts/redis/blob/master/server.coffee") redis
+          | . For example, if someone had run the CLI command:
+          pre: code.nohighlight
+            | borg install redis
+        p
+          | ...at some point in the project's history.
+        p
+          strong(style="color:#999") NOTICE:
+          |  Its important to use 
+          code @cwd
+          |  because it can point to other projects if Borg is 
+          | being loaded as a library inside of another application.
+        p
+          strong(style="color:#999") NOTICE: 
+          code @import
+          |  is what actually overrides the scope of 
+          code this
+          |  or 
+          code @
+          |  for the module.
 
         +section('Asynchronous Flow Control')
+        p
+          | There are a lot of ways to do this, but we like 
+          strong
+            | Continuation-Passing Style (
+            a(href="http://matt.might.net/articles/by-example-continuation-passing-style/") CPS
+            | )
+          | . One well-known caveat to using this approach is remembering that all 
+          a(href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Statements")
+            | Javascript flow-control statements
+          | --such as
+          code if
+          | , 
+          code else
+          | , 
+          code try
+          | , 
+          code catch
+          | , etc.--don't normally apply.
+        p
+          | The popular solution is to select 
+          a(href="https://github.com/caolan/async") a
+          |  
+          a(href="https://www.npmjs.com/package/promise") third
+          | -
+          a(href="https://www.npmjs.com/package/q") party
+          |  
+          a(href="https://github.com/mikesmullin/async2") library
+          |  providing
+          | the equivalent behavior as a set of user-defined functions. Borg provides
+          | its own set of functions for this purpose.
+        p
+          | From the 
+          strong script developer
+          |  perspective, all you need to know is 
+          code @then()
+          | .
+        p 
+          | You can think of 
+          code @then()
+          |  as an alias for 
+          code: a(href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push")
+            | Array::push()
+          |  on an array holding a list of your functions
+          | which will be executed in-order, all-at-once, later
+          | after all scripts have been processed.
+        p
+          | For example:
+        pre: code
+          | @then (cb) =>
+          |   console.log "This won't be executed until later."
+        p
+          | From the 
+          strong resource developer
+          |  perspective, you now understand why your functions need a compatible signature:
         pre: code.coffee
-          | @then
-          | @call
+          | module.exports = ->
+          |   
+          a(href="https://lodash.com/docs#assign") _.assign
+          |  @,
+          |    super_fine_resource: (pkgs, [o]...) => @inject_flow =>
+          |      # your code here
+        p
+          | As you get further along, you may also find some of these resources useful:
+        pre: code.coffee
           | @inject_flow (end) =>
+          | @call
+
 
         +section('Console Debugging')
         p
@@ -946,25 +1070,29 @@ block content
           | to prevent going too far or taking a long time between
           | iterations:
         pre: code.coffee
-          | @die "The reason is I am debugging. This is only temporary."
+          | @then @die "I am debugging. This is only temporary."
           | process.exit 1 # the non-async way
         p
           | Its a valid strategy and occasionally faster than other methods.
 
         +section('Interactive Debugging')
         p
-          | You can start also Borg with the 
+          | You can execute any 
+          code borg
+          |  CLI command with 
           code debug
-          |  parameter to launch a 
+          |  as the first parameter to launch a 
           a(href="http://www.google.com/chrome/") Chrome
           |  browser using 
           a(href="https://developer.chrome.com/devtools") DevTools
-          |  to catch breakpoints, pause, step over,
-          | step into, step out, continue, and inspect the stack, backtrace, 
-          | etc. From there the experience is very similar to any other 
+          |  . This will let you set and catch 
+          code debugger
+          |  breakpoints, pause, step over,
+          | step into, step out, continue, and inspect stack, backtrace, 
+          | variables, etc. From there the experience is very similar to any other 
           | Javascript, Node.JS, or CoffeeScript application.
         pre: code.nohighlight
-          | borg debug
+          | borg debug assimilate aws-ca-dev-web01.example.org
 
         +section('Automated Testing')
 
@@ -976,10 +1104,6 @@ block content
         pre: code.nohighlight
           | borg encrypt
 
-        +section('Iteration')
-        pre: code
-          | @each()
-          | @eachServer()
 
 
         +chapter('Common Resources')

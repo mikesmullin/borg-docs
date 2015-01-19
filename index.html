@@ -44,7 +44,7 @@ cd Devops/</code></pre>
             is expected to be accessed directly, beginning with the following command:
           </p>
           <pre><code class="nohighlight">borg help</code></pre>
-          <p><strong style="color:#999">NOTICE:</strong> Most<code>borg</code> CLI commands require your working directory to be the project root.</p>
+          <p><strong style="color:#999">NOTICE:</strong> Most <code>borg</code> CLI commands require your working directory to be the project root.</p>
           <h2 id="cloud-integration">2. Cloud Integration</h2>
           <p>
             Though abstracted to integrate with any cloud provider,
@@ -66,12 +66,12 @@ Secret Access Key: your-aws-secret-key</code></pre>
           <h3 id="vernacular">3.1. Vernacular</h3>
           <ul>
             <li><strong>script: </strong>file containing code listing steps to complete orchestration.<br><br></li>
-            <li> <strong>resource: </strong>named function organizing common steps for reuse across multiple scripts; often with the secondary goal of becoming os agnostic.<br><br></li>
+            <li> <strong>resource: </strong>named function organizing common steps for reuse across multiple scripts; often with the secondary goal of becoming operating system agnostic.<br><br></li>
             <li> <strong>server: </strong>file containing code defining how remote machines are named and addressed, and which scripts must be applied in order to complete their orchestration.<br><br></li>
             <li> <strong>attribute: </strong>server variable; representing static data, dynamic runtime calculation functions, or personal preferences/overrides for use by scripts at runtime.<br><br></li>
             <li> <strong>networks.coffee: </strong>file containing a list of servers and their attributes--as well as the relationship of one server to another in a hierarchy of datacenters, groups, server types, and server instances.<br><br></li>
             <li> <strong>datacenter: </strong>the outermost unit available for the grouping of reusable server definitions (e.g., one datacenter may contain two or more instances of the same server)<br><br></li>
-            <li> <strong>group: </strong>another unit available for the grouping of servers; typically named after the environment and project (e.g., a datacenter may contain a group for the production environment of project A as well as the staging environment for project B, both of which contain separate instances of the same type of server)<br><br></li>
+            <li> <strong>group: </strong>another layer of organization available for the grouping of servers within datacenters; typically named after the environment and project (e.g., a datacenter may contain a group for the production environment of Project A as well as the staging environment for Project B, both of which contain separate instances of the same type of server)<br><br></li>
             <li> <strong>borg create: </strong>to provision a new empty remote server via cloud provider apis.<br><br></li>
             <li> <strong>borg assimilate: </strong>to orchestrate a remote server.<br><br></li>
             <li> <strong>borg assemble: </strong>to both <code>create</code> and then <code>assimilate</code>.<br><br></li>
@@ -392,7 +392,7 @@ datacenters:
             <li><strong><a href="index.html#third-party-resources">Third-Party Resources</a>:</strong> Resources which clearly wouldn't be used by every project;
               these are packaged externally and installed as <a href="http://git-scm.com/book/en/v2/Git-Tools-Submodules">
                 <Git>submodules</Git></a> by <code>borg install</code> as-needed. That is so anyone can author a set of resources and share 
-              with others as easily as uploading to <a href="http://github.com">Github.com</a>.<br><br>
+              with others as easily as uploading to <a href="http://github.com">Github.com</a>.
             </li>
           </ul>
           <p>Each of these are discussed further in their own separate chapters below.</p>
@@ -456,15 +456,61 @@ borg assemble aws-ca-dev-web99.example.org</code></pre>
               </p>
             </li>
           </ol>
+          <p>The basic server definition looks like this:</p>
+          <pre><code class="coffee"># scripts/servers/web.coffee
+module.exports =
+  target: ->
+    @server.type is 'web'
+  assimilate: ->
+    @import @cwd, 'scripts', 'web'</code></pre>
+          <p>The callback function <code>target: -></code> is expected to return a <a href="http://en.wikipedia.org/wiki/Boolean_data_type">boolean</a> determining whether the current <code>@server</code> object matches this server definition. Since this is CoffeeScript,
+            all statements are expressions, and the last expression of any function
+            is always returned, unless otherwise specified. So that's exactly
+            what this example does.
+          </p>
+          <p><strong style="color:#999">NOTICE:</strong> Borg will only process the first match found in <code>scripts/servers/*.coffee</code> .</p>
+          <p>When a match is found, the next callback function <code>assimilate: -></code> is executed. From there it is up to you to specify
+            any commands or <code>@import</code> declarations that act upon the remote server to
+            complete orchestration.
+          </p>
           <h3 id="importing-code">6.2. Importing Code</h3>
-          <p>The import declaration takes arguments similarly to <code><a href="http://nodejs.org/api/path.html#path_path_join_path1_path2">path.join()</a></code>. The <code>@cwd</code> variable is a string provided by Borg holding the result of <code><a href="http://nodejs.org/api/process.html#process_process_cwd">process.cwd()</a></code>which is expected to be the absolute path to the root of your
+          <p>The import declaration takes arguments similarly to <code><a href="http://nodejs.org/api/path.html#path_path_join_path1_path2">path.join()</a></code>. The <code>@cwd</code> variable is a string provided by Borg holding the result of <code><a href="http://nodejs.org/api/process.html#process_process_cwd">process.cwd()</a></code> which is expected to be the absolute path to the root of your
             Borg project.
           </p>
-          <pre><code class="coffee">@import @cwd, 'scripts', 'vendor', 'redis', 'server'</code></pre>
+          <pre><code class="coffee">  @import @cwd, 'scripts', 'vendor', 'redis', 'server'</code></pre>
+          <p>This will <code><a href="http://nodejs.org/api/modules.html">require()</a></code> a script located at <code>scripts/vendor/redis/server.coffee</code>, which in this case can be expected to be provided by a third-party 
+            resource named <code><a href="https://github.com/borg-scripts/redis/blob/master/server.coffee">redis</a></code>. For example, if someone had run the CLI command:
+            <pre><code class="nohighlight">borg install redis</code></pre>
+          </p>
+          <p>...at some point in the project's history.</p>
+          <p><strong style="color:#999">NOTICE:</strong> Its important to use <code>@cwd</code> because it can point to other projects if Borg is 
+            being loaded as a library inside of another application.
+          </p>
+          <p><strong style="color:#999">NOTICE: </strong><code>@import</code> is what actually overrides the scope of <code>this</code> or <code>@</code> for the module.</p>
           <h3 id="asynchronous-flow-control">6.3. Asynchronous Flow Control</h3>
-          <pre><code class="coffee">@then
-@call
-@inject_flow (end) =></code></pre>
+          <p>There are a lot of ways to do this, but we like <strong>Continuation-Passing Style (<a href="http://matt.might.net/articles/by-example-continuation-passing-style/">CPS</a>)</strong>. One well-known caveat to using this approach is remembering that all <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Statements">Javascript flow-control statements</a>--such as<code>if</code>, <code>else</code>, <code>try</code>, <code>catch</code>, etc.--don't normally apply.</p>
+          <p>The popular solution is to select <a href="https://github.com/caolan/async">a</a> <a href="https://www.npmjs.com/package/promise">third</a>-<a href="https://www.npmjs.com/package/q">party</a> <a href="https://github.com/mikesmullin/async2">library</a> providing
+            the equivalent behavior as a set of user-defined functions. Borg provides
+            its own set of functions for this purpose.
+          </p>
+          <p>From the <strong>script developer</strong> perspective, all you need to know is <code>@then()</code>.</p>
+          <p>
+             
+            You can think of <code>@then()</code> as an alias for <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push">Array::push()</a></code> on an array holding a list of your functions
+            which will be executed in-order, all-at-once, later
+            after all scripts have been processed.
+          </p>
+          <p>For example:</p>
+          <pre><code>@then (cb) =>
+  console.log "This won't be executed until later."</code></pre>
+          <p>From the <strong>resource developer</strong> perspective, you now understand why your functions need a compatible signature:</p>
+          <pre><code class="coffee">module.exports = ->
+  <a href="https://lodash.com/docs#assign">_.assign</a> @,
+   super_fine_resource: (pkgs, [o]...) => @inject_flow =>
+     # your code here</code></pre>
+          <p>As you get further along, you may also find some of these resources useful:</p>
+          <pre><code class="coffee">@inject_flow (end) =>
+@call</code></pre>
           <h3 id="console-debugging">6.4. Console Debugging</h3>
           <p>
             Of course, some people prefer to temporarily sprinkle log
@@ -478,24 +524,21 @@ console.log() # the non-async way</code></pre>
             to prevent going too far or taking a long time between
             iterations:
           </p>
-          <pre><code class="coffee">@die "The reason is I am debugging. This is only temporary."
+          <pre><code class="coffee">@then @die "I am debugging. This is only temporary."
 process.exit 1 # the non-async way</code></pre>
           <p>Its a valid strategy and occasionally faster than other methods.</p>
           <h3 id="interactive-debugging">6.5. Interactive Debugging</h3>
-          <p>You can start also Borg with the <code>debug</code> parameter to launch a <a href="http://www.google.com/chrome/">Chrome</a> browser using <a href="https://developer.chrome.com/devtools">DevTools</a> to catch breakpoints, pause, step over,
-            step into, step out, continue, and inspect the stack, backtrace, 
-            etc. From there the experience is very similar to any other 
+          <p>You can execute any <code>borg</code> CLI command with <code>debug</code> as the first parameter to launch a <a href="http://www.google.com/chrome/">Chrome</a> browser using <a href="https://developer.chrome.com/devtools">DevTools</a> . This will let you set and catch <code>debugger</code> breakpoints, pause, step over,
+            step into, step out, continue, and inspect stack, backtrace, 
+            variables, etc. From there the experience is very similar to any other 
             Javascript, Node.JS, or CoffeeScript application.
           </p>
-          <pre><code class="nohighlight">borg debug</code></pre>
+          <pre><code class="nohighlight">borg debug assimilate aws-ca-dev-web01.example.org</code></pre>
           <h3 id="automated-testing">6.6. Automated Testing</h3>
           <h3 id="cryptography">6.7. Cryptography</h3>
           <pre><code class="coffee">@encrypt()
 @decrypt()</code></pre>
           <pre><code class="nohighlight">borg encrypt</code></pre>
-          <h3 id="iteration">6.8. Iteration</h3>
-          <pre><code>@each()
-@eachServer()</code></pre>
           <h2 id="common-resources">7. Common Resources</h2>
           <p>There is a third-party submodule that comes with every new <code>borg init</code> and that is the borg-scripts/resources repository. It holds the 
             most basic functions you would expect to use in any project.
@@ -624,7 +667,6 @@ borg update</code></pre>
                   <li><a href="index.html#interactive-debugging">Interactive Debugging</a></li>
                   <li><a href="index.html#automated-testing">Automated Testing</a></li>
                   <li><a href="index.html#cryptography">Cryptography</a></li>
-                  <li><a href="index.html#iteration">Iteration</a></li>
                 </ul>
               </li>
               <li><a href="index.html#common-resources">Common Resources</a>

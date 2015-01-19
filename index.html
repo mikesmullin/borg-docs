@@ -688,6 +688,46 @@ test: web:<br><span style="color:lime">&#x2714;</span> web01 was able to connect
             </p>
           </ol>
           <h3 id="@execute()">7.1. @execute()</h3>
+          <p>
+            Execute shell command(s) on remote host. Perhaps the most used of
+            all resources.
+          </p>
+          <p><strong>Example:</strong></p>
+          <pre><code class="coffee">@then @execute "echo --no-rdoc --no-ri | sudo tee /etc/gemrc"</code></pre>
+          <p><strong>Options:</strong></p>
+          <ul>
+            <li><strong>sudo:</strong> (Optional): If <code>true</code>, command will be prefixed with the string <code>sudo</code>. If <code>false</code>, no prefix is added. If typeof string, prefix will be<code>sudo -u#{string}</code>. This option can be useful when you want to sudo
+              a resource that depends on other resources. In that
+              case, they all support this option, and forward the
+              option recursively. But sometimes when piping is
+              involved, its easier to just define sudo in the
+              command yourself and omit this option.
+              Default is <code>false</code>.<br><br>
+            </li>
+            <li><strong>su:</strong> (Optional): Must a be a string containing a username. Will prefix
+              the command with <code>sudo su - #{string}</code>. Alternatively you can also just prefix the command
+              yourself. Default is <code>null</code> or no prefix. Mutually exclusive of <code>sudo:</code>.<br><br>
+            </li>
+            <li><strong>retry</strong> (Optional): Integer representing number of times to retry the command
+              if it fails, before giving up and <code>@die()</code>ing. Default is <code>0</code>.<br><br>
+            </li>
+            <li><strong>ignore_errors:</strong> (Optional): Boolean representing whether to <code>@die()</code> if failure is encountered. Default is <code>true</code>.<br><br></li>
+            <li><strong>expect:</strong> (Optional): A kind of assertion for testing the result of the command.
+              If integer, must match the exit code. If RegExp, must match the combined
+              stdout and stderr output. If string, must case-sensitive string match 
+              the combined output. Failed matches will subsequently <code>@die()</code>, while matches continue.<br><br>
+            </li>
+            <li><strong>test:</strong> (Optional): A callback Function of signature <code>({code, out}) =></code> where <code>code</code> is the exit code, and <code>out</code> is the combined stdout and stderr output string.
+              Can be used as an alternative to <code>expect:</code> to define your own assertions, or to parse data
+              from the output, or to transform
+              the <code>@execute()</code> resource into a kind of asynchronous <code>if</code> statement alternative, as in the following example:
+              <pre><code class="coffee">@then @execute "date", test: ({out}) =>
+  if null isnt out.match /Sep/
+    @then @log "Yay, a birthday month!"
+  else
+    @then @log "Boo."</code></pre><strong style="color:#999">NOTICE:</strong><code>@execute()</code>internally wraps <code>@inject_flow()</code> before calling our <code>test:</code> callback function.<br><br>
+            </li>
+          </ul>
           <h3 id="@package-update()">7.2. @package_update()</h3>
           <h3 id="@install()">7.3. @install()</h3>
           <h3 id="@uninstall()">7.4. @uninstall()</h3>

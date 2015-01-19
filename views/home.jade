@@ -1302,7 +1302,121 @@ block content
             | will all be converted to an OS-agnostic version in the future, 
             | the author hasn’t had any immediate need for it, yet. Expect 
             | it to be added sooner if someone will volunteer the pull request.
+
         +section('@execute()')
+        p
+          | Execute shell command(s) on remote host. Perhaps the most used of
+          | all resources.
+        p: strong Example:
+        pre: code.coffee
+          | @then @execute "echo --no-rdoc --no-ri | sudo tee /etc/gemrc"
+        p: strong Options:
+        ul
+          li
+            strong sudo:
+            |  (Optional): If 
+            code true
+            | , command will be prefixed with the string 
+            code sudo
+            | . If 
+            code false
+            | , no prefix is added. If typeof string, prefix will be
+            code sudo -u\#{string}
+            | . This option can be useful when you want to sudo
+            | a resource that depends on other resources. In that
+            | case, they all support this option, and forward the
+            | option recursively. But sometimes when piping is
+            | involved, its easier to just define sudo in the
+            | command yourself and omit this option.
+            | Default is 
+            code false
+            | .
+            br
+            br
+          li
+            strong su:
+            |  (Optional): Must a be a string containing a username. Will prefix
+            | the command with 
+            code sudo su - \#{string}
+            | . Alternatively you can also just prefix the command
+            | yourself. Default is 
+            code null
+            |  or no prefix. Mutually exclusive of 
+            code sudo:
+            | .
+            br
+            br
+          li
+            strong retry
+            |  (Optional): Integer representing number of times to retry the command
+            | if it fails, before giving up and 
+            code @die()
+            | ing. Default is 
+            code 0
+            | .
+            br
+            br
+          li
+            strong ignore_errors:
+            |  (Optional): Boolean representing whether to 
+            code @die()
+            |  if failure is encountered. Default is 
+            code true
+            | .
+            br
+            br
+          li
+            strong expect:
+            |  (Optional): A kind of assertion for testing the result of the command.
+            | If integer, must match the exit code. If RegExp, must match the combined
+            | stdout and stderr output. If string, must case-sensitive string match 
+            | the combined output. Failed matches will subsequently 
+            code @die()
+            | , while matches continue.
+            br
+            br
+          li
+            strong test:
+            |  (Optional): A callback Function of signature 
+            code ({code, out}) =>
+            |  where 
+            code code
+            |  is the exit code, and 
+            code out
+            |  is the combined stdout and stderr output string.
+            | Can be used as an alternative to 
+            code expect:
+            |  to define your own assertions, or to parse data
+            | from the output, or to transform
+            | the 
+            code @execute()
+            |  resource into a kind of asynchronous 
+            code if
+            |  statement alternative, as in the following example:
+            pre: code.coffee
+              | @then @execute "date", test: ({out}) =>
+              |   if null isnt out.match /Sep/
+              |     @then @log "Yay, a birthday month!"
+              |   else
+              |     @then @log "Boo."
+            strong(style="color:#999") NOTICE:
+            code @execute()
+            | internally wraps 
+            code @inject_flow()
+            |  before calling our 
+            code test:
+            |  callback function.
+            br
+            br
+
+
+
+
+
+
+
+
+
         +section('@package_update()')
         +section('@install()')
         +section('@uninstall()')

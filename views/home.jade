@@ -1320,7 +1320,7 @@ block content
             code sudo
             | . If 
             code false
-            | , no prefix is added. If typeof string, prefix will be
+            | , no prefix is added. If typeof string, prefix will be 
             code sudo -u\#{string}
             | . This option can be useful when you want to sudo
             | a resource that depends on other resources. In that
@@ -1395,7 +1395,7 @@ block content
             |  statement alternative, as in the following example:
             pre: code.coffee
               | @then @execute "date", test: ({out}) =>
-              |   if null isnt out.match /Sep/
+              |   if out.match /Sep/
               |     @then @log "Yay, a birthday month!"
               |   else
               |     @then @log "Boo."
@@ -1410,20 +1410,335 @@ block content
             br
 
 
-
-
-
-
-
-
-
         +section('@package_update()')
+        p
+          | Updates the local cached copy of OS package manager repository.
+          | Usually done prior to 
+          code: a(href="#@install()") @install()
+          | especially if a new third-party repository was just added to the list.
+        p: strong Example:
+        pre: code.coffee
+          | @then @package_update()
+        p
+          | This resource can be a little awkward because you have to remember to
+          | use the parenthesis, as it takes no arguments.
+        p
+          strong(style="color:#999") NOTICE:
+          |  In the future this resource will check if it succeeded recently
+          | or if the repo list changed since last run, and skip if its not
+          | productive to run again.
+
+
         +section('@install()')
+        p
+          | Install new software package(s) via the OS package manager.
+        p: strong Example:
+        pre: code.coffee
+          | @then @install "git build-essential unzip"
+        p
+          | This resource only takes one argument, which is a space-delimited
+          | list of the packages to install. It also assumes 
+          code sudo: true
+          |  when calling 
+          code: a(href="#@execute()") @execute()
+          | .
+        p
+          strong(style="color:#999") PROTIP:
+          |  Almost all the common resources follow a conventional function
+          | signature where the first argument represents a list of things,
+          | and the second argument is an object containing optional key
+          | values.
+          | That list argument can be a string, or it can also be an array
+          | of strings, which may come in handy if your items naturally 
+          | contain spaces that you don't intend to be parsed as delimiters.
+
+
         +section('@uninstall()')
+        p
+          | The opposite of 
+          code: a(href="#@install()") @install()
+          | .
+        p: strong Example:
+        pre: code.coffee
+          | @then @uninstall "whoopsie samba"
+        p
+          | This resource only takes one argument, which is a space-delimited
+          | list of the packages to install. It also assumes 
+          code sudo: true
+          |  when calling 
+          code: a(href="#@execute()") @execute()
+          | .
+
+
         +section('@directory()')
+        p
+          | Make one or more directories on the remote server, and/or
+          | set their ownership and permissions.
+        p: strong Example:
+        pre: code.coffee
+          | @then @directory "/var/www/example.org",
+          |   recursive: true
+          |   owner: 'www-data'
+          |   group: 'www-data'
+          |   mode: '0755'
+          |   sudo: true
+        p: strong Options:
+        ul
+          li
+            strong recursive:
+            |  (Optional): Boolean indicating whether to create parent
+            | directories if they do not already exist.
+            br
+            br
+          li
+            | Inherits all options from 
+            code: a(href="#@execute()") @execute()
+            | .
+            br
+            br
+          li
+            | Inherits all options from 
+            code: a(href="#@chown()") @chown()
+            | , except 
+            code recursive:
+            | .
+            br
+            br
+          li
+            | Inherits all options from 
+            code: a(href="#@chmod()") @chmod()
+            | , except 
+            code recursive:
+            | .
+            br
+            br
+
+
         +section('@chown()')
+        p
+          | Set ownership of a file or directory.
+        p: strong Example:
+        pre: code.coffee
+          | @then @chown "/etc/nginx",
+          |   owner: 'nginx'
+          |   group: 'nginx'
+          |   recursive: true
+          |   sudo: true
+        p: strong Options:
+        ul
+          li
+            strong owner:
+            |  (Required): String owner name.
+            br
+            br
+          li
+            strong group:
+            |  (Optional): String group name.
+            br
+            br
+          li
+            strong recursive:
+            |  (Optional): Boolean indicating whether to modify ownership
+            | of child directories and files, if they exist.
+            br
+            br
+          li
+            | Inherits all options from 
+            code: a(href="#@execute()") @execute()
+            | .
+            br
+            br
+
+
         +section('@chmod()')
+        p
+          | Set permission mode of a file or directory.
+        p: strong Example:
+        pre: code.coffee
+          | @then @chmod "/etc/nginx",
+          |   mode: '0755'
+          |   recursive: true
+          |   sudo: true
+        p: strong Options:
+        ul
+          li
+            strong mode:
+            |  (Required): String 
+            a(href="http://linux.die.net/man/1/chmod") MODE
+            | .
+            br
+            br
+          li
+            strong recursive:
+            |  (Optional): Boolean indicating whether to modify ownership
+            | of child directories and files, if they exist.
+            br
+            br
+          li
+            | Inherits all options from 
+            code: a(href="#@execute()") @execute()
+            | .
+            br
+            br
+
+
         +section('@template()')
+        p
+          | Create or replace a text file on the remote machine
+          | with the result of a local template.
+        p: strong Example:
+        pre: code.coffee
+          | @then @template [__dirname, 'templates', 'default', 'logrotate'],
+          |   to: "/etc/logrotate.d/example_org.conf"
+          |   owner: 'root'
+          |   group: 'root'
+          |   mode: '0600'
+          |   sudo: true
+          |   variables:
+          |     paths:
+          |       '/srv/*/current/log/*.log':
+          |         weekly: true
+          |         rotate: 4
+          |         missingok: true
+          |         copytruncate: true
+          |         create: "555 \#{@server.web_user} www-data"
+          |         compress: true
+        p
+          | The first argument in this example is a 
+          code: a(href="http://nodejs.org/api/path.html#path_path_join_path1_path2") path.join()
+          |  style location
+          | of the local template, while 
+          code: a(href="http://nodejs.org/docs/latest/api/globals.html#globals_dirname") __dirname
+          |  evaluates to the absolute path of the current script. Its easiest to reference your
+          | template files relative to the script because they are usually distributed together,
+          | but you can also use 
+          code @cwd
+          | .
+        p: strong Options:
+        ul
+          li
+            strong to:
+            |  (Required): String absolute path to remote file.
+            br
+            br
+          li
+            strong variables:
+            |  (Optional): Object containing hierarchy of keys that become
+            the context of 
+            code this
+            | or 
+            code @
+            | inside the template. (e.g., 
+            code variables: pet_name: 'trudy'
+            |  is accessed as 
+            code @pet_name
+            |  within the scope of the template tags.
+            br
+            br
+            strong(style="color:#999") PROTIP:
+            |  The 
+            code: a(href="#@server-object") @server
+            |  and 
+            code: a(href="#@networks-object") @networks
+            |  objects are always in template scope.
+            br
+            br
+          li
+            strong content:
+            |  (Optional): String representing entire file contents.
+            | When specified, 
+            code to:
+            |  is omitted, and the path to the remote file is specified
+            | as the first argument to the resource, instead.
+            br
+            br
+            strong(style="color:#999") PROTIP:
+            |  Sometimes, instead of creating a separate template file,
+            | especially if the template is very short, mostly variables,
+            | or requires complex logic to create, its easier to pass
+            | them inline as a string to this option.
+            br
+            br
+            strong Example:
+            pre: code.coffee
+              | @then @template "/etc/logrotate.d/example_org.conf",
+              |   content: """
+              |   /srv/*/current/log/*.log:
+              |     weekly
+              |     rotate 4
+              |     missingok
+              |     copytruncate
+              |     create 555 \#{@server.web_user} www-data
+              |     compress
+              |   """
+              |   owner: 'root'
+              |   group: 'root'
+              |   mode: '0600'
+              |   sudo: true
+          li
+            | Inherits all options from 
+            code: a(href="#@execute()") @execute()
+            | .
+            br
+            br
+          li
+            | Inherits all options from 
+            code: a(href="#@chown()") @chown()
+            | , except 
+            code recursive:
+            | .
+            br
+            br
+          li
+            | Inherits all options from 
+            code: a(href="#@chmod()") @chmod()
+            | , except 
+            code recursive:
+            | .
+            br
+            br
+          li
+            | Inherits all options from 
+            code: a(href="#@upload()") @upload()
+            | .
+
+        p: strong Template Markup:
+        p
+          | The template markup is most like 
+          strong
+            | Extended Ruby (
+            a(href="http://guides.rubyonrails.org/layouts_and_rendering.html#rendering-by-default-convention-over-configuration-in-action") ERB
+            | )
+          |  adjusted for CoffeeScript. For example, the companion template for the first example given above could be:
+        pre: code.erb
+          | <% for key, o of @paths: %>
+          | <%=key%> {
+          | <% for k, v of o: %>
+          |   <%=k%><%=if v is true then '' else ' '+v%>
+          | <% end %>
+          | }
+          | <% end %>
+        p
+          | ...and it would have produced the same output as in the second example above's 
+          code content:
+          |  option. Have a look at the 
+          a(href="https://github.com/borg-scripts/resources/blob/master/template_renderer.coffee") parser implementation
+          |  for details. You can also find examples while perusing various 
+          a(href="#third-party-resources") third-party resource
+          |  templates.
+        p
+          | Template files are located within the 
+          code scripts/*/templates/default/*.coffee
+          |  path nearest to where your script is located.
+          | All template files should have a 
+          code .coffee
+          |  extension, even though it isn't required to be suffixed in the first argument.
+        p
+          strong(style="color:#999") PROTIP:
+          |  Borg includes 
+          a(href="http://sugarjs.com/api") Sugar.js
+          |  globally for both templates and scripts.
+
         +section('@upload()')
         +section('@download()')
         +section('@link()')

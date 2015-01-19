@@ -696,7 +696,7 @@ test: web:<br><span style="color:lime">&#x2714;</span> web01 was able to connect
           <pre><code class="coffee">@then @execute "echo --no-rdoc --no-ri | sudo tee /etc/gemrc"</code></pre>
           <p><strong>Options:</strong></p>
           <ul>
-            <li><strong>sudo:</strong> (Optional): If <code>true</code>, command will be prefixed with the string <code>sudo</code>. If <code>false</code>, no prefix is added. If typeof string, prefix will be<code>sudo -u#{string}</code>. This option can be useful when you want to sudo
+            <li><strong>sudo:</strong> (Optional): If <code>true</code>, command will be prefixed with the string <code>sudo</code>. If <code>false</code>, no prefix is added. If typeof string, prefix will be <code>sudo -u#{string}</code>. This option can be useful when you want to sudo
               a resource that depends on other resources. In that
               case, they all support this option, and forward the
               option recursively. But sometimes when piping is
@@ -722,19 +722,176 @@ test: web:<br><span style="color:lime">&#x2714;</span> web01 was able to connect
               from the output, or to transform
               the <code>@execute()</code> resource into a kind of asynchronous <code>if</code> statement alternative, as in the following example:
               <pre><code class="coffee">@then @execute "date", test: ({out}) =>
-  if null isnt out.match /Sep/
+  if out.match /Sep/
     @then @log "Yay, a birthday month!"
   else
     @then @log "Boo."</code></pre><strong style="color:#999">NOTICE:</strong><code>@execute()</code>internally wraps <code>@inject_flow()</code> before calling our <code>test:</code> callback function.<br><br>
             </li>
           </ul>
           <h3 id="@package-update()">7.2. @package_update()</h3>
+          <p>
+            Updates the local cached copy of OS package manager repository.
+            Usually done prior to <code><a href="index.html#@install()">@install()</a></code>especially if a new third-party repository was just added to the list.
+          </p>
+          <p><strong>Example:</strong></p>
+          <pre><code class="coffee">@then @package_update()</code></pre>
+          <p>
+            This resource can be a little awkward because you have to remember to
+            use the parenthesis, as it takes no arguments.
+          </p>
+          <p><strong style="color:#999">NOTICE:</strong> In the future this resource will check if it succeeded recently
+            or if the repo list changed since last run, and skip if its not
+            productive to run again.
+          </p>
           <h3 id="@install()">7.3. @install()</h3>
+          <p>Install new software package(s) via the OS package manager.</p>
+          <p><strong>Example:</strong></p>
+          <pre><code class="coffee">@then @install "git build-essential unzip"</code></pre>
+          <p>
+            This resource only takes one argument, which is a space-delimited
+            list of the packages to install. It also assumes <code>sudo: true</code> when calling <code><a href="index.html#@execute()">@execute()</a></code>.
+          </p>
+          <p><strong style="color:#999">PROTIP:</strong> Almost all the common resources follow a conventional function
+            signature where the first argument represents a list of things,
+            and the second argument is an object containing optional key
+            values.
+            That list argument can be a string, or it can also be an array
+            of strings, which may come in handy if your items naturally 
+            contain spaces that you don't intend to be parsed as delimiters.
+          </p>
           <h3 id="@uninstall()">7.4. @uninstall()</h3>
+          <p>The opposite of <code><a href="index.html#@install()">@install()</a></code>.</p>
+          <p><strong>Example:</strong></p>
+          <pre><code class="coffee">@then @uninstall "whoopsie samba"</code></pre>
+          <p>
+            This resource only takes one argument, which is a space-delimited
+            list of the packages to install. It also assumes <code>sudo: true</code> when calling <code><a href="index.html#@execute()">@execute()</a></code>.
+          </p>
           <h3 id="@directory()">7.5. @directory()</h3>
+          <p>
+            Make one or more directories on the remote server, and/or
+            set their ownership and permissions.
+          </p>
+          <p><strong>Example:</strong></p>
+          <pre><code class="coffee">@then @directory "/var/www/example.org",
+  recursive: true
+  owner: 'www-data'
+  group: 'www-data'
+  mode: '0755'
+  sudo: true</code></pre>
+          <p><strong>Options:</strong></p>
+          <ul>
+            <li><strong>recursive:</strong> (Optional): Boolean indicating whether to create parent
+              directories if they do not already exist.<br><br>
+            </li>
+            <li>Inherits all options from <code><a href="index.html#@execute()">@execute()</a></code>.<br><br></li>
+            <li>Inherits all options from <code><a href="index.html#@chown()">@chown()</a></code>, except <code>recursive:</code>.<br><br></li>
+            <li>Inherits all options from <code><a href="index.html#@chmod()">@chmod()</a></code>, except <code>recursive:</code>.<br><br></li>
+          </ul>
           <h3 id="@chown()">7.6. @chown()</h3>
+          <p>Set ownership of a file or directory.</p>
+          <p><strong>Example:</strong></p>
+          <pre><code class="coffee">@then @chown "/etc/nginx",
+  owner: 'nginx'
+  group: 'nginx'
+  recursive: true
+  sudo: true</code></pre>
+          <p><strong>Options:</strong></p>
+          <ul>
+            <li><strong>owner:</strong> (Required): String owner name.<br><br></li>
+            <li><strong>group:</strong> (Optional): String group name.<br><br></li>
+            <li><strong>recursive:</strong> (Optional): Boolean indicating whether to modify ownership
+              of child directories and files, if they exist.<br><br>
+            </li>
+            <li>Inherits all options from <code><a href="index.html#@execute()">@execute()</a></code>.<br><br></li>
+          </ul>
           <h3 id="@chmod()">7.7. @chmod()</h3>
+          <p>Set permission mode of a file or directory.</p>
+          <p><strong>Example:</strong></p>
+          <pre><code class="coffee">@then @chmod "/etc/nginx",
+  mode: '0755'
+  recursive: true
+  sudo: true</code></pre>
+          <p><strong>Options:</strong></p>
+          <ul>
+            <li><strong>mode:</strong> (Required): String <a href="http://linux.die.net/man/1/chmod">MODE</a>.<br><br></li>
+            <li><strong>recursive:</strong> (Optional): Boolean indicating whether to modify ownership
+              of child directories and files, if they exist.<br><br>
+            </li>
+            <li>Inherits all options from <code><a href="index.html#@execute()">@execute()</a></code>.<br><br></li>
+          </ul>
           <h3 id="@template()">7.8. @template()</h3>
+          <p>
+            Create or replace a text file on the remote machine
+            with the result of a local template.
+          </p>
+          <p><strong>Example:</strong></p>
+          <pre><code class="coffee">@then @template [__dirname, 'templates', 'default', 'logrotate'],
+  to: "/etc/logrotate.d/example_org.conf"
+  owner: 'root'
+  group: 'root'
+  mode: '0600'
+  sudo: true
+  variables:
+    paths:
+      '/srv/*/current/log/*.log':
+        weekly: true
+        rotate: 4
+        missingok: true
+        copytruncate: true
+        create: "555 #{@server.web_user} www-data"
+        compress: true</code></pre>
+          <p>The first argument in this example is a <code><a href="http://nodejs.org/api/path.html#path_path_join_path1_path2">path.join()</a></code> style location
+            of the local template, while <code><a href="http://nodejs.org/docs/latest/api/globals.html#globals_dirname">__dirname</a></code> evaluates to the absolute path of the current script. Its easiest to reference your
+            template files relative to the script because they are usually distributed together,
+            but you can also use <code>@cwd</code>.
+          </p>
+          <p><strong>Options:</strong></p>
+          <ul>
+            <li><strong>to:</strong> (Required): String absolute path to remote file.<br><br></li>
+            <li><strong>variables:</strong> (Optional): Object containing hierarchy of keys that become
+              <the>context of </the><code>this</code>or <code>@</code>inside the template. (e.g., <code>variables: pet_name: 'trudy'</code> is accessed as <code>@pet_name</code> within the scope of the template tags.<br><br><strong style="color:#999">PROTIP:</strong> The <code><a href="index.html#@server-object">@server</a></code> and <code><a href="index.html#@networks-object">@networks</a></code> objects are always in template scope.<br><br>
+            </li>
+            <li><strong>content:</strong> (Optional): String representing entire file contents.
+              When specified, <code>to:</code> is omitted, and the path to the remote file is specified
+              as the first argument to the resource, instead.<br><br><strong style="color:#999">PROTIP:</strong> Sometimes, instead of creating a separate template file,
+              especially if the template is very short, mostly variables,
+              or requires complex logic to create, its easier to pass
+              them inline as a string to this option.<br><br><strong>Example:</strong>
+              <pre><code class="coffee">@then @template "/etc/logrotate.d/example_org.conf",
+  content: """
+  /srv/*/current/log/*.log:
+    weekly
+    rotate 4
+    missingok
+    copytruncate
+    create 555 #{@server.web_user} www-data
+    compress
+  """
+  owner: 'root'
+  group: 'root'
+  mode: '0600'
+  sudo: true</code></pre>
+            </li>
+            <li>Inherits all options from <code><a href="index.html#@execute()">@execute()</a></code>.<br><br></li>
+            <li>Inherits all options from <code><a href="index.html#@chown()">@chown()</a></code>, except <code>recursive:</code>.<br><br></li>
+            <li>Inherits all options from <code><a href="index.html#@chmod()">@chmod()</a></code>, except <code>recursive:</code>.<br><br></li>
+            <li>Inherits all options from <code><a href="index.html#@upload()">@upload()</a></code>.</li>
+          </ul>
+          <p><strong>Template Markup:</strong></p>
+          <p>The template markup is most like <strong>Extended Ruby (<a href="http://guides.rubyonrails.org/layouts_and_rendering.html#rendering-by-default-convention-over-configuration-in-action">ERB</a>)</strong> adjusted for CoffeeScript. For example, the companion template for the first example given above could be:</p>
+          <pre><code class="erb"><% for key, o of @paths: %>
+<%=key%> {
+<% for k, v of o: %>
+  <%=k%><%=if v is true then '' else ' '+v%>
+<% end %>
+}
+<% end %></code></pre>
+          <p>...and it would have produced the same output as in the second example above's <code>content:</code> option. Have a look at the <a href="https://github.com/borg-scripts/resources/blob/master/template_renderer.coffee">parser implementation</a> for details. You can also find examples while perusing various <a href="index.html#third-party-resources">third-party resource</a> templates.</p>
+          <p>Template files are located within the <code>scripts/*/templates/default/*.coffee</code> path nearest to where your script is located.
+            All template files should have a <code>.coffee</code> extension, even though it isn't required to be suffixed in the first argument.
+          </p>
+          <p><strong style="color:#999">PROTIP:</strong> Borg includes <a href="http://sugarjs.com/api">Sugar.js</a> globally for both templates and scripts.</p>
           <h3 id="@upload()">7.9. @upload()</h3>
           <h3 id="@download()">7.10. @download()</h3>
           <h3 id="@link()">7.11. @link()</h3>

@@ -1024,11 +1024,7 @@ block content
           strong script developer
           |  perspective, all you need to know is 
           code @then()
-          | .
-        p 
-          | You can think of 
-          code @then()
-          |  as an alias for 
+          | ; you can think of it as an alias for 
           code: a(href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push")
             | Array::push()
           |  on an array holding a list of your functions
@@ -1036,30 +1032,121 @@ block content
           | after all scripts have been processed.
         p
           | For example:
-        pre: code
+        pre: code.coffee
           | @then (cb) =>
           |   console.log "This won't be executed until later."
+          |   cb()
         p
-          | From the 
-          strong resource developer
-          |  perspective, you now understand why your functions need a compatible signature:
+          | Except--instead of passing an anonymous function you've just defined--most
+          | of the time you are passing strings into predefined resource functions
+          | which do the heavy lifting, and hide the passing of callbacks behind an 
+          | alluringly simple syntax. Your scripts look more like this:
         pre: code.coffee
-          | module.exports = ->
-          |   
+          | @then @log "This won't be executed until later."
+        p
+          | Which means, from the 
+          strong resource developer
+          |  perspective, your resource functions are defined with a compatible signature, like this:
+        pre: code.coffee
+          | module.exports = -> 
           a(href="https://lodash.com/docs#assign") _.assign
           |  @,
-          |    super_fine_resource: (pkgs, [o]...) => @inject_flow =>
-          |      # your code here
+          |  some_resource: (names, [o]...) => (cb) =>
+          |    # your code here
+          |    cb()
         p
-          | As you get further along, you may also find some of these resources useful:
+          | Actually, most times you want to continue using async flows inside your
+          | resource. For that we have 
+          code @inject_flow()
+          |  which looks like this:
         pre: code.coffee
-          | @inject_flow (end) =>
-          | @call
+          | module.exports = -> _.assign @,
+          |  sync_clock: (names, [o]...) => @inject_flow =>
+          |    @then 
+          a(href="#@execute()") @execute
+          |  "sudo ntpdate -s time.nist.gov"
+          |    # no callback hell pyramids here
+        p
+          | There are three major reasons why we require asynchronous control flow
+          | to get anything done in Borg, versus a DSL that is strictly blocking,
+          | or simply pasting one long bash script in a string block for that matter.
+        ol
+          li
+            | Its critical to the extensibility and dynamism of the attribute system
+            | that we have a two-pass system of script evaluation. The first pass
+            | being the one defining attributes and enqueuing functions to the 
+            a(href="http://strongloop.com/strongblog/node-js-event-loop/") giant
+            |  
+            a(href="http://blog.mixu.net/2011/02/01/understanding-the-node-js-event-loop/") event loop
+            |  
+            a(href="http://blog.carbonfive.com/2013/10/27/the-javascript-event-loop-explained/") in
+            |  
+            a(href="http://stackoverflow.com/questions/19822668/what-exactly-is-a-node-js-event-loop-tick") the
+            |  
+            a(href="http://chimera.labs.oreilly.com/books/1234000001808/ch03.html#chap3_id35941348") sky
+            | . The second pass being the one actually performing actions on the
+            | remote server during orchestration--possibly re-evaluating
+            | attributes since the first pass, in reaction to a server response,
+            | or another script.
+            br
+            br
+          li
+            | Eventually, your script could be super-parallelized; like multiple
+            | SSH connections to one remote server, performing complimentary
+            | steps at the same time. Admittedly this application
+            | has yet to be demonstrated.
+            br
+            br
+          li
+            | Some resources might actually be using functions that are asynchronous
+            | even though your script code may not.
+        p
+          | There are more resources related to async that might become
+          | useful as you get further along. You can find them by reviewing
+          | examples in the common 
+          code: a(href="https://github.com/borg-scripts/resources/blob/master/index.coffee") resources
+          |  resource, and in 
+          code: a(href="https://github.com/mikesmullin/borg/blob/master/Borg.coffee") Borg.coffee
+          | .
 
+        +section('Cryptography')
+        p
+          | You are encouraged to use the following resources
+          |  to obfuscate strings in your project repository.
+          | Its a smart thing to do with sensitive information,
+          | which would then be relatively safe even if your
+          | devops scripts were accidentally leaked.
+        pre: code.coffee
+          | @then @die @encrypt "example utf8 string"
+          | decrypted_string = @decrypt "example base64 string"
+        p
+          | The cipher is OpenSSL 
+          a(href="http://en.wikipedia.org/wiki/Advanced_Encryption_Standard") AES-256-CBC
+          | . The key is derived
+          | from a file in your project root named 
+          code ./secret
+          |  which typically contains a random 512-byte base64 string
+          | generated by 
+          code borg init
+          |  when your project is first initialized. This file
+          | should never be shared in the same way the project
+          | source is, or the encryption is useless.
+        p
+          | Likewise, you can also encrypt binary data files
+          | your scripts are expected to upload to remote servers,
+          | such as individualized software licenses, using the Borg CLI:
+        pre: code.nohighlight
+          | borg encrypt # see help
+        p
+          | and then passing the
+          code decrypt: true
+          |  option when using resources like 
+          code @upload()
+          |  to transmit the local file to its remote location on the server.
 
         +section('Console Debugging')
         p
-          | Of course, some people prefer to temporarily sprinkle log
+          | Some people prefer to temporarily sprinkle log
           | statements throughout their code and then run it to see
           | what order they appear on the console log:
         pre: code.coffee
@@ -1094,15 +1181,90 @@ block content
         pre: code.nohighlight
           | borg debug assimilate aws-ca-dev-web01.example.org
 
-        +section('Automated Testing')
-
-
-        +section('Cryptography')
-        pre: code.coffee
-          | @encrypt()
-          | @decrypt()
+        +section('Test Provisioning')
+        p
+          | There is a 
+          code test
+          |  mode you can enter with the Borg CLI, which keeps
+          | a separate list of servers provisioned in the cloud. This way, while
+          | testing, servers you create are still created at your cloud provider--as
+          | not to differ from the production environment hardware--but they
+          | have a "test-" prefix to set them apart.
+        p
+          | For example:
         pre: code.nohighlight
-          | borg encrypt
+          | borg test assimilate aws-ca-dev-web01.example.org
+        p
+          | While in test mode, you can perform bulk operations such as
+          | provisioning every server from your dev environment to see
+          | if recent script modifications broke anything.
+        pre: code.nohighlight
+          | borg test assimilate aws-ca-dev
+        p
+          | The fourth argument is matching on regular expression.
+        p
+          | For more information, see:
+        pre: code.nohighlight
+          | borg help test
+
+        +section('Integration Testing')
+        p
+          strong(style="color:#999") NOTICE:
+          |  This feature is currently in development.
+        p
+          | A feature using 
+          a(href="http://mochajs.org/") Mocha
+          |  is planned to run tests in CoffeeScript that are able to
+          | execute commands for testing purposes.
+          | For example, it might be useful if, after a new machine is cooked,
+          | Borg were able to automatically connect to one or more of its peer servers
+          | as defined in 
+          code network.coffee
+          |  and perform a command 
+          code nc -vz s &lt;public_ip&gt; &lt;some_port&gt;
+          |  in order to determine if important ports were open to them.
+        p
+          | This type of test would essentially be attempting to reproduce, from the
+          | end-user's perspective, whether or not the assimilation resulted
+          | in a working service. You can imagine the output would look something
+          | like:
+        pre: code.nohighlight
+          | user@host: ~/project$ borg checkup aws-ca-dev-web01.example.org
+          | test: web:
+          br
+          span(style="color:lime") &#x2714;
+          |  web01 was able to connect to redis01 on tcp/6379
+          br
+          span(style="color:red") &#x2717;
+          |  web02 was NOT able to connect to redis01 on tcp/6379
+          |    
+          span(style="color:red")
+            | nc: getaddrinfo: Name or service not known
+          | 
+          | 
+          | 2 test(s) run in 204ms. 1 passed, 1 failed.
+
+        +section('Jobs')
+        p
+          strong(style="color:#999") NOTICE:
+          |  This feature is currently in development.
+        p
+          | Jobs are essentially partial scripts, which are invoked from 
+          | the command-line and perform specific
+          | actions of a periodic nature on a remote server.
+          | For example, it could
+          | restart a service, or perform a software deployment, or
+          | truncate logs, or any other routine or mundane task.
+        p
+          | Jobs are located in 
+          code scripts/jobs/*.coffee
+          | , which have the benefit of being distributed with
+          | and utilizing all the accompanying resources. For example, tasks
+          | related to the maintenance of a Percona server, such as peforming
+          | a backup snapshot, could be distributed along with the
+          code: a(href="https://github.com/borg-scripts/percona") percona
+          |  resource which installs the service.
+
 
 
 

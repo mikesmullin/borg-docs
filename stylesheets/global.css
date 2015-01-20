@@ -219,6 +219,9 @@ article h3 {
   font: 600 1.2em/1.3em "Source Sans Pro", sans-serif;
   margin: 1.5em 0 1em 0;
 }
+article .video {
+  text-align: center;
+}
 article p {
   margin: 1em 0;
 }

@@ -96,6 +96,12 @@ block content
           | only 
           a(href="http://aws.amazon.com/") Amazon Web Services
           |  integration is implemented at present.
+        p
+          strong(style="color:#999") ADVERTISEMENT:
+          |  Accepting pull requests to support other 
+          a(href="http://talkincloud.com/talkin039-cloud-top-100-cloud-services-providers/top-100-cloud-services-providers-list-2013-ranked-0")
+            | Cloud Provider APIs
+          | .
 
         +section('Amazon Web Services')
         p This integration depends on the AWS CLI utility being installed:
@@ -631,6 +637,8 @@ block content
           | Borg at runtime, even though you didn’t specify them anywhere. 
           | These can be based on parts of the server name 
           | (e.g., 
+          code @server.datacenter
+          | , 
           code @server.type
           | , 
           code @server.id
@@ -643,8 +651,6 @@ block content
           | , 
           code @server.fqdn
           | ) or position in the hierarchy (e.g., 
-          code @server.datacenter
-          | , 
           code @server.group
           | ).
 
@@ -1297,11 +1303,15 @@ block content
             | resulting in far less boilerplate and complexity than the 
             | equivalent heavy resource.
           p
-            | Also notice that at the moment they’re all targeting Ubuntu
-            | server exclusively. Although its half-expected that resources 
-            | will all be converted to an OS-agnostic version in the future, 
-            | the author hasn’t had any immediate need for it, yet. Expect 
-            | it to be added sooner if someone will volunteer the pull request.
+            | Though expecting to support others, most resources favor 
+            a(href="http://www.ubuntu.com/download/server") Ubuntu Server
+            |  when forced to choose, as the time of writing.
+        p
+          strong(style="color:#999") ADVERTISEMENT:
+          |  Accepting pull requests to support other 
+          a(href="http://www.serverwatch.com/columns/article.php/3900711/The-Top-10-Linux-Server-Distributions.htm")
+            | Server Operating Systems
+          | .
 
         +section('@execute()')
         p
@@ -1415,7 +1425,7 @@ block content
           | Updates the local cached copy of OS package manager repository.
           | Usually done prior to 
           code: a(href="#@install()") @install()
-          | especially if a new third-party repository was just added to the list.
+          |  especially if a new third-party repository was just added to the list.
         p: strong Example:
         pre: code.coffee
           | @then @package_update()
@@ -1492,12 +1502,6 @@ block content
             br
           li
             | Inherits all options from 
-            code: a(href="#@execute()") @execute()
-            | .
-            br
-            br
-          li
-            | Inherits all options from 
             code: a(href="#@chown()") @chown()
             | , except 
             code recursive:
@@ -1512,6 +1516,10 @@ block content
             | .
             br
             br
+          li
+            | Inherits all options from 
+            code: a(href="#@execute()") @execute()
+            | .
 
 
         +section('@chown()')
@@ -1546,8 +1554,6 @@ block content
             | Inherits all options from 
             code: a(href="#@execute()") @execute()
             | .
-            br
-            br
 
 
         +section('@chmod()')
@@ -1578,8 +1584,6 @@ block content
             | Inherits all options from 
             code: a(href="#@execute()") @execute()
             | .
-            br
-            br
 
 
         +section('@template()')
@@ -1594,7 +1598,9 @@ block content
           |   group: 'root'
           |   mode: '0600'
           |   sudo: true
-          |   variables:
+          |   
+          span#template-example-1 variables:
+          | 
           |     paths:
           |       '/srv/*/current/log/*.log':
           |         weekly: true
@@ -1618,7 +1624,7 @@ block content
         ul
           li
             strong to:
-            |  (Required): String absolute path to remote file.
+            |  (Required): String absolute path of the remote file.
             br
             br
           li
@@ -1662,7 +1668,9 @@ block content
             strong Example:
             pre: code.coffee
               | @then @template "/etc/logrotate.d/example_org.conf",
-              |   content: """
+              |   
+              span#template-example-2 content
+              | : """
               |   /srv/*/current/log/*.log:
               |     weekly
               |     rotate 4
@@ -1675,9 +1683,144 @@ block content
               |   group: 'root'
               |   mode: '0600'
               |   sudo: true
+            strong(style="color:#999") PROTIP:
+            |  You can 
+            code: a(href="#cryptography") @decrypt()
+            |  part or all of 
+            code content:
+            |  to secure sensitive info.
+            br
+            br
+          li
+            | Inherits all options recursively from 
+            code: a(href="#@upload()") @upload()
+            | .
+
+        p: strong Template Markup:
+        p
+          | The template markup is most like 
+          strong
+            | Extended Ruby (
+            a(href="http://guides.rubyonrails.org/layouts_and_rendering.html#rendering-by-default-convention-over-configuration-in-action") ERB
+            | )
+          |  adjusted for CoffeeScript. For example, the companion template for the 
+          code: a(href="#template-example-1") variables:
+          |  passed in the first example given above could be:
+        pre: code.erb
+          | <% for key, o of @paths: %>
+          | <%=key%> {
+          | <% for k, v of o: %>
+          |   <%=k%><%=if v is true then '' else ' '+v%>
+          | <% end %>
+          | }
+          | <% end %>
+        p
+          | ...and it would have produced the same string as passed to the second example
+          |  above's 
+          code: a(href="#template-example-2") content:
+          |  option. Have a look at the 
+          a(href="https://github.com/borg-scripts/resources/blob/master/template_renderer.coffee") parser implementation
+          |  for details. You can also find examples while perusing various 
+          a(href="#third-party-resources") third-party resource
+          |  templates.
+        p
+          | Template files are located within the 
+          code scripts/*/templates/default/*.coffee
+          |  path nearest to where your script is located.
+          | All template files should have a 
+          code .coffee
+          |  extension, even though it isn't required to be suffixed in the first argument.
+        p
+          strong(style="color:#999") PROTIP:
+          |  Borg includes 
+          a(href="http://sugarjs.com/api") Sugar.js
+          |  globally for both templates and scripts.
+
+        +section('@upload()')
+        p
+          | Upload a local file to the remote server. Overrides existing files
+          | unless checksums match.
+        p: strong Example:
+        pre: code.coffee
+          | for file in ['example.org.key', 'example.org.crt', 'godaddy_chain.crt']
+          |   @then @upload [ __dirname, 'files', 'default', file ],
+          |     to: '/etc/ssl/'+file
+          |     decrypt: not file.match /godaddy/
+          |     owner: 'root'
+          |     group: 'root'
+          |     mode: '0400'
+          |     sudo: true
+        p
+          | The first argument is the local file to upload, provided similarly to 
+          a(href="#@template()") @template()
+          | .
+        p: strong Options:
+        ul
+          li
+            strong to:
+            |  (Required): String absolute path of the remote file.
+            br
+            br
+          li
+            strong decrypt:
+            |  (Optional): Boolean indicating whether to 
+            code @decrypt()
+            | the local file prior to transmission.
+            | (e.g., if 
+            code: a(href="#cryptography") borg encrypt
+            |  was used to secure the file on disk)
+            br
+            br
+          li
+            | Inherits all options from 
+            code: a(href="#@chown()") @chown()
+            | , except 
+            code recursive:
+            | .
+            br
+            br
+          li
+            | Inherits all options from 
+            code: a(href="#@chmod()") @chmod()
+            | , except 
+            code recursive:
+            | .
+            br
+            br
           li
             | Inherits all options from 
             code: a(href="#@execute()") @execute()
+            | .
+
+
+        +section('@download()')
+        p
+          | Cause the remote server to download a file from the 
+          a(href="http://www.google.com/about/datacenters/gallery/#/all") Internet
+          | .
+        p: strong Example:
+        pre: code.coffee
+          | @then @download 'http://download.redis.io/releases/redis-2.8.19.tar.gz',
+          |   checksum: '29bb08abfc3d392b2f0c3e7f48ec46dd09ab1023f9a5575fc2a93546f4ca5145'
+          |   to: '/tmp/redis.tar.gz'
+          |   mode: '0400'
+        p
+          | The first argument is a string representing the remote file url to download.
+        p: strong Options:
+        ul
+          li
+            strong to:
+            |  (Required): String absolute path of the remote file.
+            br
+            br
+          li
+            strong checksum:
+            |  (Optional): String holding the 
+            code: a(href="http://linux.die.net/man/1/sha256sum") sha256sum
+            |  which must match.
+            br
+            | If specified, a non-match will result in 
+            code @die()
             | .
             br
             br
@@ -1699,56 +1842,322 @@ block content
             br
           li
             | Inherits all options from 
-            code: a(href="#@upload()") @upload()
+            code: a(href="#@execute()") @execute()
             | .
 
-        p: strong Template Markup:
-        p
-          | The template markup is most like 
-          strong
-            | Extended Ruby (
-            a(href="http://guides.rubyonrails.org/layouts_and_rendering.html#rendering-by-default-convention-over-configuration-in-action") ERB
-            | )
-          |  adjusted for CoffeeScript. For example, the companion template for the first example given above could be:
-        pre: code.erb
-          | <% for key, o of @paths: %>
-          | <%=key%> {
-          | <% for k, v of o: %>
-          |   <%=k%><%=if v is true then '' else ' '+v%>
-          | <% end %>
-          | }
-          | <% end %>
-        p
-          | ...and it would have produced the same output as in the second example above's 
-          code content:
-          |  option. Have a look at the 
-          a(href="https://github.com/borg-scripts/resources/blob/master/template_renderer.coffee") parser implementation
-          |  for details. You can also find examples while perusing various 
-          a(href="#third-party-resources") third-party resource
-          |  templates.
-        p
-          | Template files are located within the 
-          code scripts/*/templates/default/*.coffee
-          |  path nearest to where your script is located.
-          | All template files should have a 
-          code .coffee
-          |  extension, even though it isn't required to be suffixed in the first argument.
-        p
-          strong(style="color:#999") PROTIP:
-          |  Borg includes 
-          a(href="http://sugarjs.com/api") Sugar.js
-          |  globally for both templates and scripts.
 
-        +section('@upload()')
-        +section('@download()')
         +section('@link()')
-        +section('@remote_file_exists()')
+        p
+          | Create a symlink on the remote host.
+        p: strong Example:
+        pre: code.coffee
+          | current_dir = '/var/www/example.org/current'
+          | 
+          | # symlink logs for convenience
+          | @then @link "\#{current_dir}/logs",
+          |   target: '/var/log/example.org'
+          |   sudo: true
+        p
+          | The first argument is a string representing the real file or directory which will be linked.
+        p: strong Options:
+        ul
+          li
+            strong target:
+            |  (Required): String path to output link to.
+            br
+            br
+          li
+            | Inherits all options from 
+            code: a(href="#@execute()") @execute()
+            | .
+
+
         +section('@append_line_to_file()')
+        p
+          | Append a new line to an existing file, only if a matching RegExp doesn't already exist.
+        p: strong Example:
+        pre: code.coffee
+          | @then @append_line_to_file '/etc/apache2/apache2.conf',
+          |   unless_find: '^ServerName 127.0.0.1' # avoids commented lines
+          |   append: 'ServerName 127.0.0.1'
+        p
+          | The first argument is a string representing the absolute file path on the remote host.
+        p
+          | This resource is handy when you're not confident you should replace
+          | the entire remote file (e.g., The Apache configuration template would vary significantly by
+          | release version, OS distro, and even distro version.)
+        p: strong Options:
+        ul
+          li
+            strong unless_find:
+            |  (Required): String regular expression formatted for 
+            a(href="http://linux.die.net/man/1/grep") grep
+            | .
+            br
+            br
+          li
+            strong append:
+            |  (Required): String to append.
+            br
+            br
+          li
+            | Inherits all options from 
+            code: a(href="#@execute()") @execute()
+            | .
+
+
         +section('@replace_line_in_file()')
+        p
+          | Replace a line in an existing file, only if and where the first matching RegExp is found.
+        p: strong Example:
+        pre: code.coffee
+          | @then @replace_line_in_file '/etc/redis/redis.conf',
+          |   find: '^bind [\w:.]+$'
+          |   replace: 'bind 0.0.0.0'
+        p
+          | The first argument is a string representing the absolute file path on the remote host.
+        p
+          | This resource is handy when you don't feel like templating the entire remote file
+          | for a simple change, or when non-action is acceptable if a match isn't found.
+        p: strong Options:
+        ul
+          li
+            strong find:
+            |  (Required): String regular expression formatted for 
+            a(href="http://linux.die.net/man/1/sed") sed
+            | .
+            br
+            br
+          li
+            strong replace:
+            |  (Required): String serving as the replacement.
+            br
+            br
+          li
+            | Inherits all options from 
+            code: a(href="#@execute()") @execute()
+            | .
+
+
         +section('@user()')
+        p
+          | Create a new user, if the username doesn't exist already.
+        p: strong Example:
+        pre: code.coffee
+          | @then @user 'regal',
+          |   comment:    'Reggie Almus'
+          |   password:   '$1$UPmdzNfV$k6U33XIPlWuE1z1cPJ/QQ/'
+          |   group_name: 'developers'
+          |   groups:   [ 'regal', 'sudo' ]
+          |   ssh_keys: [ 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCt2pTY9+k/PwmGuEwmXOQMrq/fnHHJ+LIexmB172hlf1ytMaXPy4lcNPFX3j7Q5lI8z+L3SFl66Lcakc6i/BIQR8Jr7Vz2UmtaeF21sQKHS1Bw5he4l9F/EkikgIetVGU8+X7xaBkV4+2v6ELE1UMVot0YI7DurVj3aLRpsCYyihj9ju/J6Few4ffxP3ef4FsM89Tsnj0SYi8lnjEfKBbLm5ydu9oJH6vG6AHGWjVstznrMwvzZiKiX8gOJmZSCLNL1SAEYrnuGx3rWa5BzdWuLcvrbhJk2Gge4T4iUItt9VsqJ/vFbV95JwYjLLr6nTC3i7Exd7SOn+GKYJVldY/H' ]
+          |   sudo:        true
+        p
+          | The first argument is a string representing the new username.
+        p: strong Options:
+        ul
+          li
+            strong password:
+            |  (Required): String password, as encrypted by the command:
+            pre: code.nohighlight
+              a(href="http://linux.die.net/man/1/sslpasswd") openssl passwd
+              |  -1 "theplaintextpassword"
+          li
+            strong comment:
+            |  (Optional): String usually used to indicate full name in proper case.
+            br
+            br
+          li
+            strong group_name:
+            |  (Optional): String representing the user's default/primary group.
+            br
+            br
+          li
+            strong groups:
+            |  (Optional): Array of strings representing the user's additional groups.
+            br
+            br
+          li
+            strong ssh_keys:
+            |  (Optional): Array of strings, each containing the typical one-line
+            | contents of any OpenSSH 
+            a(href="http://www.ece.uci.edu/~chou/ssh-key.html") public key
+            |  file(s) to be installed in the user's 
+            code ~/.ssh/
+            |  directory.
+            br
+            br
+          li
+            | Inherits all options from 
+            code: a(href="#@execute()") @execute()
+            | .
+
+
         +section('@group()')
+        p
+          | Create a new group, if the group name doesn't exist already.
+        p: strong Example:
+        pre: code.coffee
+          | @then @group 'developers', sudo: true
+        p
+          | The first argument is a string representing the new group name.
+        p: strong Options:
+        ul
+          li
+            | Inherits all options from 
+            code: a(href="#@execute()") @execute()
+            | .
+
+
         +section('@deploy()')
+        p
+          | Download a version control repository within a 
+          a(href="http://capistranorb.com/") Capistrano
+          | -style
+          a(href="http://capistranorb.com/documentation/getting-started/structure/") 
+            | directory structure
+          | .
+        p: strong Example:
+        pre: code.coffee
+          | @then @deploy 'borg-docs',
+          |   deploy_to: '/srv/borg-docs-mirror'
+          |   git:
+          |     repo: 'git@github.com:mikesmullin/borg-docs.git'
+          |     branch: 'master'
+          |     deployKey: @decrypt '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'
+          |   keep_releases: 3
+          |   owner: 'nodejs'
+          |   group: 'developer'
+        p
+          | The first argument should be an alias of the repo. It is planned to be used in a later version.
+        p: strong Options:
+        ul
+          li
+            strong deploy_to:
+            |  (Required): String representing remote path to the directory to download into.
+            br
+            br
+          li
+            strong git:
+            |  (Required): Object containing this structure:
+            ul
+              li
+                strong repo:
+                |  (Required): String URI to the hosted Git repository.
+                br
+                br
+              li
+                strong branch:
+                |  (Required): String branch, tag, or git ref.
+                br
+                br
+              li
+                strong deployKey:
+                |  (Optional): The OpenSSH 
+                a(href="http://www.ece.uci.edu/~chou/ssh-key.html")
+                  | private key
+                | , if one is required to gain read access to the hosted
+                | repository.
+                br
+                br
+                strong(style="color:#999") PROTIP:
+                |  It is recommended to use 
+                code: a(href="#cryptography") @decrypt()
+                |  to secure private keys, as their contents could grant access
+                | to everywhere the corresponding public key was installed, if 
+                | leaked.
+          li
+            strong keep_releases:
+            |  (Optional): Integer how many previous 
+            code ./releases/*/
+            |  directories to keep around before deleting them to save disk space.
+            | Default is 
+            code 3
+            | .
+            br
+            br
+          li
+            | Inherits all options from 
+            code: a(href="#@chown()") @chown()
+            | , except 
+            code recursive:
+            | .
+            br
+            br
+          li
+            | Inherits all options from 
+            code: a(href="#@chmod()") @chmod()
+            | , except 
+            code recursive:
+            | .
+            br
+            br
+          li
+            | Inherits all options from 
+            code: a(href="#@execute()") @execute()
+            | .
+
+
+        p
+          | Right now only 
+          a(href="http://git-scm.com/") Git
+          |  via 
+          a(href="https://training.github.com/kit/downloads/github-git-cheat-sheet.pdf") CLI
+          |  is supported.
+        p
+          strong(style="color:#999") ADVERTISEMENT:
+          |  Accepting pull requests to support other 
+          strong
+            | Source Code Managers (
+            a(href="http://en.wikipedia.org/wiki/List_of_revision_control_software") SCMs
+            | ).
+
+
         +section('@reboot()')
+        p
+          | Command the remote server to 
+          code: a(href="http://linux.die.net/man/8/reboot") reboot
+          |  itself.
+        p: strong Example:
+        pre: code.coffee
+          | @then @reboot wait: 3 # min
+        p
+          | Useful when the remote Linux kernel was upgraded, or a hardware driver
+          | was installed that depends on a different kernel version, or if you
+          | want to test that your configuration survives a restart.
+        p: strong Options:
+        ul
+          li
+            strong wait:
+            |  (Optional): Minutes to wait for the server to finish rebooting
+            | before attempting to reconnect and resume the SSH session where
+            | the script left off. Default is 
+            code 1
+            | .
+            br
+            br
+            strong(style="color:#999") PROTIP:
+            |  Its important to tweak this for slow servers because Borg's 
+            code @ssh
+            |  client will only retry 3 times before giving up and calling 
+            code @die()
+            |  in the event it takes longer than expected.
+            br
+            br
+            strong(style="color:#999") NOTICE:
+            |  Borg will always call 
+            code @die()
+            |  in the event it gets stuck or confused. This is a safety convention
+            | you should try to observe in your scripts, as well.
+            | During mass assimilation, you want failures to be obvious.
+            | Its hard to recover from what might otherwise be a hang, or 
+            | skipping of some commands. In most cases, its much easier to embrace
+            | the 
+            a(href="http://searchservervirtualization.techtarget.com/feature/Setting-up-VMs-to-fail-When-a-disposable-VM-makes-financial-sense")
+              | disposable hardware
+            |  strategy of just destroying
+            | the remote machine and trying again later.
+
+
 
         +chapter('Third-Party Resources')
         pre: code
